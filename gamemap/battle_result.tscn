@@ -1,0 +1,91 @@
+[gd_scene load_steps=8 format=3 uid="uid://b30051q8urhy3"]
+
+[ext_resource type="FontFile" uid="uid://dco3sqfksbb2s" path="res://fonts/STHUPO.TTF" id="1_bh3tk"]
+[ext_resource type="Script" path="res://gamemap/battle_result.gd" id="1_ywcyb"]
+[ext_resource type="FontFile" uid="uid://vmp1130v7i47" path="res://fonts/MSYHBD.TTC" id="2_xr7yp"]
+[ext_resource type="FontFile" uid="uid://bnwvmpnygcfyy" path="res://fonts/MSYH.TTC" id="3_024wi"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7vaom"]
+font = ExtResource("1_bh3tk")
+font_size = 96
+
+[sub_resource type="LabelSettings" id="LabelSettings_x1o2j"]
+font = ExtResource("2_xr7yp")
+font_size = 36
+
+[sub_resource type="LabelSettings" id="LabelSettings_gqequ"]
+font = ExtResource("3_024wi")
+font_size = 31
+
+[node name="battle_result" type="Node2D"]
+script = ExtResource("1_ywcyb")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+self_modulate = Color(0.196078, 0.196078, 0.196078, 1)
+offset_right = 1600.0
+offset_bottom = 900.0
+
+[node name="Button" type="Button" parent="PanelContainer"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+button_mask = 0
+
+[node name="resultLabel" type="Label" parent="."]
+offset_left = 568.0
+offset_top = 219.0
+offset_right = 952.0
+offset_bottom = 322.0
+text = "你失败了"
+label_settings = SubResource("LabelSettings_7vaom")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="resultinfo" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 443.0
+offset_top = 317.0
+offset_right = 1115.0
+offset_bottom = 420.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "你的英雄已死亡"
+label_settings = SubResource("LabelSettings_x1o2j")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="enemyhealthlabel" type="Label" parent="."]
+offset_left = 581.0
+offset_top = 416.0
+offset_right = 929.0
+offset_bottom = 478.0
+text = "敌人剩余的生命值："
+label_settings = SubResource("LabelSettings_gqequ")
+
+[node name="turnlabel" type="Label" parent="."]
+offset_left = 578.0
+offset_top = 473.0
+offset_right = 926.0
+offset_bottom = 535.0
+text = "已进行的回合轮数："
+label_settings = SubResource("LabelSettings_gqequ")
+
+[node name="RestartButton" type="Button" parent="."]
+offset_left = 631.0
+offset_top = 550.0
+offset_right = 899.0
+offset_bottom = 628.0
+text = "重新开始"
+
+[node name="QuitButton" type="Button" parent="."]
+offset_left = 637.0
+offset_top = 664.0
+offset_right = 905.0
+offset_bottom = 742.0
+text = "退出"
+
+[connection signal="pressed" from="RestartButton" to="." method="_on_restart_button_pressed"]
+[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]

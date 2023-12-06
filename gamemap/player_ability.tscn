@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://eh7jxly0yw6e"]
+
+[ext_resource type="Texture2D" uid="uid://bog8d1ed4bjuu" path="res://gamemap/abilityicon.png" id="1_a7pxw"]
+[ext_resource type="FontFile" uid="uid://sshyf2b4qqgp" path="res://fonts/MSYHSB.TTC" id="2_0jkbv"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_15otm"]
+font = ExtResource("2_0jkbv")
+font_color = Color(0, 0, 0, 1)
+outline_size = 1
+
+[node name="player_ability" type="Button"]
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 60.0
+offset_bottom = 60.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(30, 30)
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("1_a7pxw")
+
+[node name="tooltip" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_left = -27.0
+offset_top = -50.0
+offset_right = 111.0
+offset_bottom = 2.0
+
+[node name="ColorRect" type="ColorRect" parent="tooltip"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="tooltip"]
+layout_mode = 2
+text = "点击激活：受到2点
+伤害,抽1张牌"
+label_settings = SubResource("LabelSettings_15otm")
+vertical_alignment = 1

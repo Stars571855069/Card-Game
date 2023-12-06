@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://bdutau7fea8r0"]
+
+[ext_resource type="Script" path="res://gamemap/enpty_slot_controller.gd" id="1_wdqld"]
+
+[node name="enpty_slot_controller" type="Node2D"]
+script = ExtResource("1_wdqld")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 120.0
+offset_bottom = 150.0
+size_flags_stretch_ratio = 0.0
+
+[node name="Button" type="Button" parent="PanelContainer"]
+self_modulate = Color(1, 1, 1, 0.862745)
+layout_mode = 2
+flat = true
+
+[connection signal="pressed" from="PanelContainer/Button" to="." method="_on_button_pressed"]

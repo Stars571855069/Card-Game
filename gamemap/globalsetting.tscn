@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8w6n5ky83gcs"]
+
+[ext_resource type="Script" path="res://gamemap/globalsetting.gd" id="1_btbql"]
+
+[node name="globalsetting" type="Node2D"]
+script = ExtResource("1_btbql")

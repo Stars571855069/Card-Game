@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://ce00ydiipi31w"]
+
+[ext_resource type="FontFile" uid="uid://dco3sqfksbb2s" path="res://fonts/STHUPO.TTF" id="1_jis4c"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_pekdy"]
+font = ExtResource("1_jis4c")
+font_size = 51
+font_color = Color(0, 0.564706, 0.921569, 1)
+outline_size = 12
+
+[node name="Manaframe" type="Node2D"]
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 378.0
+offset_bottom = 80.0
+
+[node name="Label" type="Label" parent="PanelContainer"]
+layout_mode = 2
+text = "法力值：0/0"
+label_settings = SubResource("LabelSettings_pekdy")
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,655 @@
+[gd_scene load_steps=21 format=3 uid="uid://dt3k282fhs172"]
+
+[ext_resource type="Texture2D" uid="uid://difmpm1ae5g44" path="res://mapimage/battlefield.png" id="1_8ttid"]
+[ext_resource type="Texture2D" uid="uid://bifu14xa2eb5r" path="res://mapimage/backupslot.png" id="1_16j7t"]
+[ext_resource type="Texture2D" uid="uid://bbt8dm57rthwg" path="res://mapimage/enptyslot.png" id="2_phmov"]
+[ext_resource type="PackedScene" uid="uid://dhjsbo4m08ruk" path="res://gamemap/enemybackupslot.tscn" id="3_xtria"]
+[ext_resource type="FontFile" uid="uid://bnwvmpnygcfyy" path="res://fonts/MSYH.TTC" id="4_lismf"]
+[ext_resource type="PackedScene" uid="uid://bdutau7fea8r0" path="res://gamemap/enpty_slot_controller.tscn" id="4_t4gll"]
+[ext_resource type="PackedScene" uid="uid://dlh2p3y7plprv" path="res://gamemap/enemycardslot.tscn" id="4_vja44"]
+[ext_resource type="Texture2D" uid="uid://dk8l33r58i5yf" path="res://gamemap/handframe.png" id="5_mhllw"]
+[ext_resource type="PackedScene" uid="uid://ce00ydiipi31w" path="res://gamemap/manaframe.tscn" id="5_xjxp5"]
+[ext_resource type="PackedScene" uid="uid://1rkcbowtcs55" path="res://gamemap/health_frame.tscn" id="8_rmj8r"]
+[ext_resource type="Texture2D" uid="uid://1aoaxd668k1j" path="res://gamemap/deck.png" id="9_mvfhw"]
+[ext_resource type="PackedScene" uid="uid://b30051q8urhy3" path="res://gamemap/battle_result.tscn" id="11_k8lyi"]
+[ext_resource type="PackedScene" uid="uid://eh7jxly0yw6e" path="res://gamemap/player_ability.tscn" id="13_18fj7"]
+[ext_resource type="PackedScene" uid="uid://dphwwvlmueqmg" path="res://gamemap/hero_portrait.tscn" id="13_hxdxn"]
+[ext_resource type="PackedScene" uid="uid://rjlvmlresg08" path="res://gamemap/enemy_portrait.tscn" id="14_wqfm6"]
+[ext_resource type="AudioStream" uid="uid://bdivl06tl1q5o" path="res://Sound/Jonah Senzel - Botopia.mp3" id="15_iyygu"]
+[ext_resource type="PackedScene" uid="uid://d3ka3r5qm40d1" path="res://gamemap/pause_menu.tscn" id="16_7miq7"]
+[ext_resource type="PackedScene" uid="uid://cqr2vykemyxk1" path="res://gamemap/card_description.tscn" id="18_f8c3a"]
+
+[sub_resource type="GDScript" id="GDScript_pv5nh"]
+script/source = "extends Node
+
+var cardlocationX:Array=[129,398,706,984]
+var cardlocationY:Array=[188,188,188,188]
+
+var playercardlocationX:Array=[129,398,706,984]
+var playercardlocationY:Array=[410,410,410,410]
+
+var handcardlocationX:Array=[196,336,476,616,756,896]
+var handcardlocationY:Array=[713,713,713,713,713,713]
+
+var cardreadytoplay:PackedScene
+
+
+
+var enemy_on_battlefield_card:Array=[]
+var enemy_back_up_card:Array=[]
+
+var enemycardslot:Array=[]
+var enemybackupslot:Array=[]
+
+var playercardslot:Array=[]
+
+var player_is_invulnerable=false
+var enemy_is_invulnerable=false
+
+
+var deck:Array=[]
+var deckcount:int=30
+
+var hand:Array=[]
+var handlimit:int=6
+
+var handcardnode:Array=[]
+
+#signal cardinfochange
+
+var game_end=false
+
+
+var cardcollection:Array=[]
+
+var emptyslot=preload(\"res://gamemap/enpty_slot_controller.tscn\")
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	#-----Slot preset------
+	enemybackupslot.append($\"background/enemycardslot 1/enemybackupcardslot 1/enemybackupslot1\")
+	enemybackupslot.append($\"background/enemycardslot 2/enemybackupcardslot 2/enemybackupslot2\")
+	enemybackupslot.append($\"background/enemycardslot 3/enemybackupcardslot 3/enemybackupslot3\")
+	enemybackupslot.append($\"background/enemycardslot 4/enemybackupcardslot 4/enemybackupslot4\")
+	
+	enemycardslot.append($\"background/enemycardslot 1/enemycardslot1\")
+	enemycardslot.append($\"background/enemycardslot 2/enemycardslot2\")
+	enemycardslot.append($\"background/enemycardslot 3/enemycardslot3\")
+	enemycardslot.append($\"background/enemycardslot 4/enemycardslot4\")
+	
+	playercardslot.append($\"background/playcardslot 1/emptyslot1\")
+	playercardslot.append($\"background/playcardslot 2/emptyslot2\")
+	playercardslot.append($\"background/playcardslot 3/emptyslot3\")
+	playercardslot.append($\"background/playcardslot 4/emptyslot4\")
+	
+	$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
+	$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
+	
+	$BGMPlayer.play()
+	#self.connect(\"cardinfochange\",Callable(self,\"card_description_display\"))
+	
+	for index in Globalsetting.cardloadid:
+		cardcollection.append(Globalsetting.cardtemplate.get(index))
+	#print(cardcollection)
+	#--------------deck load-------------
+	var addcardindex:int=0
+	while (addcardindex<30) :
+		#var randomindex=randi_range(0,6)
+		deck.append(Globalsetting.player_global_deck[addcardindex])
+		addcardindex+=1
+	print(deck)
+	$DeckFrame/decklabel.text=\"剩余卡牌：\"+String.num_int64(len(deck))
+	player_turn_start()
+	
+	
+
+func _on_startcombat_pressed():
+	
+	player_turn_end()
+	$endturn.disabled=true
+	$endturn.text=\"敌方回合\"
+	#drawcards(1)
+
+
+#-------remove card from hand-------
+func remove_card_from_hand(card:Node2D):
+	hand.remove_at(card.cardslot-1)
+	handcardnode.remove_at(card.cardslot-1)
+	hand_re_list(card.cardslot)
+	print(card.cardslot)
+	#print(hand)
+	#hand.erase(card)
+	
+func hand_re_list(starting_index):
+	var startnumber=0
+	var maxindex=len(handcardnode)
+	print(\"Relisting cards \" + String.num_int64(len(handcardnode)))
+	print(\" Starting with slot \"+String.num_int64(starting_index))
+	#print(str(starting_index))
+	while (startnumber<maxindex):
+		if (startnumber>=starting_index-1):
+			#print(hand[startnumber].name)
+			#handcardnode[startnumber].global_position.x=handcardlocationX[startnumber]
+			handcardnode[startnumber].card_slide_in(handcardlocationX[startnumber])
+			handcardnode[startnumber].global_position.y=handcardlocationY[startnumber]
+			handcardnode[startnumber].cardslot-=1
+			#print(\"hand[\"+startnumber+\"] is relisted\")
+		startnumber+=1
+
+	
+
+
+#------------draw cards-------------
+func drawcards(count:int):
+	if (count>0):
+		var drawindex=0
+		while (drawindex<count):
+			if(len(hand)<handlimit) and (len(deck)>0):
+				var randomcard=randi_range(0,len(deck)-1)
+				hand.append(deck[randomcard])
+				deck.erase(deck[randomcard])
+				hand[len(hand)-1].cardslot=len(hand)
+				#print(hand[len(hand)-1].cardslot)
+				$DeckFrame/decklabel.text=\"剩余卡牌：\"+String.num_int64(len(deck))
+				var handcard=load(\"res://cardtemplate/cardtemplate.tscn\").instantiate()
+				handcard.name=\"handcard\"+str(len(hand)-1)
+				$PanelContainer/HBoxContainer.add_child(handcard)
+
+				var carddrawed=handcard
+				#carddrawed.global_position.x=handcardlocationX[len(hand)-1]
+				carddrawed.global_position.x=1255
+				carddrawed.global_position.y=handcardlocationY[len(hand)-1]
+				carddrawed.cardload(hand[len(hand)-1])
+				carddrawed.card_slide_in(handcardlocationX[len(hand)-1])
+				#carddrawed.activatecard()
+				handcardnode.append(carddrawed)
+				#self.connect(\"cardinfochange\",Callable(self,\"card_description_display\"))
+				#emit_signal(\"cardinfochange\")
+				print(str(len(handcardnode)))
+				if len(deck)==0:
+					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://gamemap/emptydeck.png\")
+				elif len(deck)<=6:
+					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://gamemap/deckalmostempty.png\")
+				elif len(deck)<=15:
+					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://gamemap/deckhalf.png\")
+			elif ((len(deck)>0)):
+				print(\"hand is full\")
+			else:
+				print(\"deck is empty\")
+				player_take_damage(2)
+			drawindex+=1
+	else:
+		print(\"invalid draw count\")
+
+
+func player_turn_start():
+	drawcards(1)
+	$endturn.disabled=false
+	$endturn.text=\"结束回合\"
+	Globalsetting.player_turn=true
+	$player_ability.disabled=false
+	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon.png\")
+	Globalsetting.current_turn+=1
+	if Globalsetting.max_mana<Globalsetting.mana_max_limit:
+		Globalsetting.max_mana+=1
+	Globalsetting.current_mana=Globalsetting.max_mana
+	var string_currentmana=String.num_int64(Globalsetting.current_mana)
+	var string_maxmana=String.num_int64(Globalsetting.max_mana)
+	$background/Manaframe/PanelContainer/Label.text=\"法力值：\"+string_currentmana+\"/\"+string_maxmana
+	pass
+
+func player_turn_end():
+	Globalsetting.player_turn=false
+	$player_ability.disabled=true
+	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon_disabled.png\")
+	
+	if Globalsetting.current_turn==1:
+		enemy_play_card_first_time()
+	else:
+		enemy_play_card()
+	$visual_delay_timer.start(0.4)
+	await $visual_delay_timer.timeout
+	start_combat()
+	pass
+
+func start_combat():
+	#$TurnTimer.wait_time=5
+	var slot_index=0
+	while(slot_index<4):
+		
+		if enemycardslot[slot_index].slot_is_empty==false and playercardslot[slot_index].slot_is_empty==false :
+			var player_card=playercardslot[slot_index].get_child(1)
+			var enemy_card=enemycardslot[slot_index].get_child(1)
+			card_combat(player_card,enemy_card)
+		elif enemycardslot[slot_index].slot_is_empty==false and playercardslot[slot_index].slot_is_empty==true:
+			var enemy_card=enemycardslot[slot_index].get_child(1)
+			enemy_card.animation_attack_down()
+			player_take_damage(enemy_card.cardattack)
+			$Player_Portrait.get_hurt()
+		elif enemycardslot[slot_index].slot_is_empty==true and playercardslot[slot_index].slot_is_empty==false:
+			var player_card=playercardslot[slot_index].get_child(1)
+			player_card.animation_attack_up()
+			enemy_take_damage(player_card.cardattack)
+			$enemy_portrait.get_hurt()
+		slot_index+=1
+	$TurnTimer.start(2)
+	#player_turn_start()
+	pass
+
+
+
+
+func _on_turn_timer_timeout():
+	player_turn_start()
+	pass # Replace with function body.
+	
+
+func enemy_play_card_first_time():
+	var slot_index=randi_range(0,3)
+	#var cardpathname:String=\"enemycard\"+String.num_int64(slot_index+1)
+	var enemy_backup_card=load(\"res://cardtemplate/cardtemplate.tscn\").instantiate()
+	enemybackupslot[slot_index].add_child(enemy_backup_card)
+	var random_card_index=randi_range(0,len(cardcollection)-1)
+	enemy_backup_card.cardload(cardcollection[random_card_index])
+	enemy_backup_card.animation_card_drop_in()
+	enemybackupslot[slot_index].slot_is_empty=false
+	
+func enemy_play_card():
+	var slot_index=0
+	while(slot_index<4):
+		if enemycardslot[slot_index].slot_is_empty==true:
+			if enemybackupslot[slot_index].slot_is_empty==false:
+				var card_played=enemybackupslot[slot_index].get_child(1)
+				print(card_played.name)
+				enemybackupslot[slot_index].remove_child(card_played)
+				enemycardslot[slot_index].add_child(card_played)
+				card_played.position.x=10
+				enemycardslot[slot_index].slot_is_empty=false
+				enemybackupslot[slot_index].slot_is_empty=true
+				card_played.animation_card_drop_in()
+				#$visual_delay_timer.start(0.4)
+				#await $visual_delay_timer.timeout
+			else:
+				var enemy_backup_card=load(\"res://cardtemplate/cardtemplate.tscn\").instantiate()
+				enemybackupslot[slot_index].add_child(enemy_backup_card)
+				var random_card_index=randi_range(0,len(cardcollection)-1)
+				enemy_backup_card.cardload(cardcollection[random_card_index])
+				enemy_backup_card.animation_card_drop_in()
+				enemybackupslot[slot_index].slot_is_empty=false
+				#enemycardslot[slot_index].slot_is_empty=false
+		slot_index+=1
+	pass
+
+
+func card_combat(player_card:Node2D,enemy_card:Node2D):
+	#var visual_delay=get_tree().create_timer
+	player_card.animation_attack_up()
+	enemy_card.animation_attack_down()
+	$visual_delay_timer.start(0.7)
+	await $visual_delay_timer.timeout
+	player_card.cardhealth-=enemy_card.cardattack
+	enemy_card.cardhealth-=player_card.cardattack
+	player_card.get_hurt()
+	enemy_card.get_hurt()
+	$visual_delay_timer.start(0.5)
+	await $visual_delay_timer.timeout
+	player_card.card_state_refresh()
+	enemy_card.card_state_refresh()
+
+func player_take_damage(damage:int):
+	if player_is_invulnerable==false:
+		Globalsetting.player_health-=damage
+	$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
+	
+	if Globalsetting.player_health<=0:
+		player_lost()
+	pass
+	
+func enemy_take_damage(damage:int):
+	if enemy_is_invulnerable==false:
+		Globalsetting.enemy_health-=damage
+	$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
+	if Globalsetting.enemy_health<=0:
+		player_win()
+	pass
+
+func player_lost():
+	game_end=true
+	enemy_is_invulnerable=true
+	$battle_result/resultLabel.text=\"你失败了\"
+	$battle_result/resultinfo.text=\"你的英雄已死亡\"
+	$battle_result/enemyhealthlabel.text=\"敌人剩余的生命值：\"+String.num_int64(Globalsetting.enemy_health)
+	$battle_result/turnlabel.text=\"已进行的回合轮数：\"+String.num_int64(Globalsetting.current_turn)
+	$battle_result.visible=true
+	pass
+	
+func player_win():
+	game_end=true
+	player_is_invulnerable=true
+	$battle_result/resultLabel.text=\"你胜利了\"
+	$battle_result/resultinfo.text=\"你已击败敌方英雄\"
+	$battle_result/enemyhealthlabel.text=\"你剩余的生命值：\"+String.num_int64(Globalsetting.player_health)
+	$battle_result/turnlabel.text=\"已进行的回合轮数：\"+String.num_int64(Globalsetting.current_turn)
+	$battle_result.visible=true
+	pass
+	
+func _physics_process(delta):
+	var string_currentmana=String.num_int64(Globalsetting.current_mana)
+	var string_maxmana=String.num_int64(Globalsetting.max_mana)
+	$background/Manaframe/PanelContainer/Label.text=\"法力值：\"+string_currentmana+\"/\"+string_maxmana
+	var paused=Input.is_action_pressed(\"Esc\")
+	if paused and !game_end:
+		print(\"paused\")
+		get_tree().paused = true
+		$pause_menu.visible=true
+
+
+func _on_player_ability_pressed():
+	print(\"ability triggered\")
+	drawcards(1)
+	player_take_damage(2)
+	$player_ability.disabled=true
+	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon_disabled.png\")
+	pass # Replace with function body.
+
+func card_description_display(card_description:String,card_name:String):
+	print(\"card description changed\")
+	$Card_description.description_set(card_description,card_name)
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_dnfcb"]
+font = ExtResource("4_lismf")
+font_size = 36
+
+[node name="Gamemap" type="Node"]
+script = SubResource("GDScript_pv5nh")
+metadata/_edit_vertical_guides_ = [127.0, 251.0, 399.0, 520.0, 706.0, 984.0, 107.0, 338.0, 748.0, 895.0]
+metadata/_edit_horizontal_guides_ = [16.0, 338.0, 410.0, 559.0, 788.0, 171.0]
+
+[node name="background" type="ColorRect" parent="."]
+offset_right = 1592.0
+offset_bottom = 898.0
+color = Color(0.443137, 0.443137, 0.443137, 1)
+
+[node name="Sprite2D" type="Sprite2D" parent="background"]
+position = Vector2(792.5, 447)
+scale = Vector2(1.37066, 1.37346)
+texture = ExtResource("1_8ttid")
+
+[node name="Node" type="Node" parent="background/Sprite2D"]
+
+[node name="enemycardslot 1" type="ColorRect" parent="background"]
+layout_mode = 0
+offset_left = 337.0
+offset_top = 188.0
+offset_right = 457.0
+offset_bottom = 338.0
+
+[node name="enemybackupcardslot 1" type="ColorRect" parent="background/enemycardslot 1"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = -170.0
+offset_right = 121.0
+offset_bottom = -20.0
+
+[node name="Sprite2D" type="Sprite2D" parent="background/enemycardslot 1/enemybackupcardslot 1"]
+position = Vector2(60.625, 77.5)
+scale = Vector2(0.303709, 0.376214)
+texture = ExtResource("1_16j7t")
+
+[node name="enemybackupslot1" parent="background/enemycardslot 1/enemybackupcardslot 1" instance=ExtResource("3_xtria")]
+
+[node name="Sprite2D" type="Sprite2D" parent="background/enemycardslot 1"]
+position = Vector2(61, 75)
+scale = Vector2(0.316496, 0.362864)
+texture = ExtResource("2_phmov")
+
+[node name="enemycardslot1" parent="background/enemycardslot 1" instance=ExtResource("4_vja44")]
+
+[node name="enemycardslot 2" type="ColorRect" parent="background"]
+layout_mode = 0
+offset_left = 481.0
+offset_top = 187.0
+offset_right = 601.0
+offset_bottom = 337.0
+
+[node name="enemybackupcardslot 2" type="ColorRect" parent="background/enemycardslot 2"]
+layout_mode = 0
+offset_top = -167.0
+offset_right = 120.0
+offset_bottom = -17.0
+
+[node name="Sprite2D2" type="Sprite2D" parent="background/enemycardslot 2/enemybackupcardslot 2"]
+position = Vector2(60, 74)
+scale = Vector2(0.303709, 0.376214)
+texture = ExtResource("1_16j7t")
+
+[node name="enemybackupslot2" parent="background/enemycardslot 2/enemybackupcardslot 2" instance=ExtResource("3_xtria")]
+position = Vector2(1, -2)
+
+[node name="Sprite2D2" type="Sprite2D" parent="background/enemycardslot 2"]
+position = Vector2(62, 75)
+scale = Vector2(0.316496, 0.362864)
+texture = ExtResource("2_phmov")
+
+[node name="enemycardslot2" parent="background/enemycardslot 2" instance=ExtResource("4_vja44")]
+position = Vector2(2, 0)
+
+[node name="enemycardslot 3" type="ColorRect" parent="background"]
+layout_mode = 0
+offset_left = 628.0
+offset_top = 188.0
+offset_right = 748.0
+offset_bottom = 338.0
+
+[node name="enemybackupcardslot 3" type="ColorRect" parent="background/enemycardslot 3"]
+layout_mode = 0
+offset_top = -167.0
+offset_right = 120.0
+offset_bottom = -17.0
+
+[node name="Sprite2D3" type="Sprite2D" parent="background/enemycardslot 3/enemybackupcardslot 3"]
+position = Vector2(60, 72)
+scale = Vector2(0.303709, 0.376214)
+texture = ExtResource("1_16j7t")
+
+[node name="enemybackupslot3" parent="background/enemycardslot 3/enemybackupcardslot 3" instance=ExtResource("3_xtria")]
+position = Vector2(1, -4)
+
+[node name="Sprite2D3" type="Sprite2D" parent="background/enemycardslot 3"]
+position = Vector2(62, 75)
+scale = Vector2(0.316496, 0.362864)
+texture = ExtResource("2_phmov")
+
+[node name="enemycardslot3" parent="background/enemycardslot 3" instance=ExtResource("4_vja44")]
+
+[node name="enemycardslot 4" type="ColorRect" parent="background"]
+layout_mode = 0
+offset_left = 773.0
+offset_top = 188.0
+offset_right = 893.0
+offset_bottom = 338.0
+scale = Vector2(0.996324, 1)
+
+[node name="enemybackupcardslot 4" type="ColorRect" parent="background/enemycardslot 4"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = -171.0
+offset_right = 122.0
+offset_bottom = -17.0
+
+[node name="Sprite2D4" type="Sprite2D" parent="background/enemycardslot 4/enemybackupcardslot 4"]
+position = Vector2(61.5368, 76.75)
+scale = Vector2(0.316692, 0.375)
+texture = ExtResource("1_16j7t")
+
+[node name="enemybackupslot4" parent="background/enemycardslot 4/enemybackupcardslot 4" instance=ExtResource("3_xtria")]
+position = Vector2(0.00366211, 2)
+scale = Vector2(1.00369, 1)
+
+[node name="Sprite2D4" type="Sprite2D" parent="background/enemycardslot 4"]
+position = Vector2(61.2251, 75)
+scale = Vector2(0.317664, 0.362864)
+texture = ExtResource("2_phmov")
+
+[node name="enemycardslot4" parent="background/enemycardslot 4" instance=ExtResource("4_vja44")]
+position = Vector2(2.00739, 0)
+scale = Vector2(1.00369, 1)
+
+[node name="playcardslot 1" type="ColorRect" parent="background"]
+layout_mode = 0
+offset_left = 341.0
+offset_top = 410.0
+offset_right = 461.0
+offset_bottom = 560.0
+
+[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 1"]
+position = Vector2(58, 74)
+scale = Vector2(0.316496, 0.362864)
+texture = ExtResource("2_phmov")
+
+[node name="emptyslot1" parent="background/playcardslot 1" instance=ExtResource("4_t4gll")]
+
+[node name="playcardslot 2" type="ColorRect" parent="background"]
+layout_mode = 0
+offset_left = 487.0
+offset_top = 410.0
+offset_right = 607.0
+offset_bottom = 560.0
+
+[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 2"]
+position = Vector2(58, 74)
+scale = Vector2(0.316496, 0.362864)
+texture = ExtResource("2_phmov")
+
+[node name="emptyslot2" parent="background/playcardslot 2" instance=ExtResource("4_t4gll")]
+position = Vector2(-2, -2)
+
+[node name="playcardslot 3" type="ColorRect" parent="background"]
+layout_mode = 0
+offset_left = 629.0
+offset_top = 410.0
+offset_right = 749.0
+offset_bottom = 560.0
+
+[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 3"]
+position = Vector2(58, 74)
+scale = Vector2(0.316496, 0.362864)
+texture = ExtResource("2_phmov")
+
+[node name="emptyslot3" parent="background/playcardslot 3" instance=ExtResource("4_t4gll")]
+position = Vector2(-2, 0)
+
+[node name="playcardslot 4" type="ColorRect" parent="background"]
+layout_mode = 0
+offset_left = 774.0
+offset_top = 410.0
+offset_right = 894.0
+offset_bottom = 560.0
+
+[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 4"]
+position = Vector2(58, 74)
+scale = Vector2(0.316496, 0.362864)
+texture = ExtResource("2_phmov")
+
+[node name="emptyslot4" parent="background/playcardslot 4" instance=ExtResource("4_t4gll")]
+position = Vector2(-2, 0)
+
+[node name="Manaframe" parent="background" instance=ExtResource("5_xjxp5")]
+position = Vector2(292, 617)
+
+[node name="EnemyHealthFrame" parent="background" instance=ExtResource("8_rmj8r")]
+position = Vector2(34, 207)
+
+[node name="PlayerHealthFrame" parent="background" instance=ExtResource("8_rmj8r")]
+position = Vector2(37, 344)
+
+[node name="endturn" type="Button" parent="."]
+offset_left = 743.0
+offset_top = 629.0
+offset_right = 829.0
+offset_bottom = 662.0
+scale = Vector2(1.79434, 2.04077)
+text = "结束回合"
+icon_alignment = 1
+
+[node name="DeckFrame" type="Node" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="DeckFrame"]
+offset_left = 1255.0
+offset_top = 704.0
+offset_right = 1386.0
+offset_bottom = 857.0
+
+[node name="Sprite2D" type="Sprite2D" parent="DeckFrame/MarginContainer"]
+position = Vector2(63, 78)
+texture = ExtResource("9_mvfhw")
+
+[node name="decklabel" type="Label" parent="DeckFrame"]
+offset_left = 1218.0
+offset_top = 645.0
+offset_right = 1398.0
+offset_bottom = 697.0
+text = "剩余卡牌："
+label_settings = SubResource("LabelSettings_dnfcb")
+
+[node name="TurnTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="visual_delay_timer" type="Timer" parent="."]
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 184.0
+offset_top = 708.0
+offset_right = 1014.0
+offset_bottom = 860.0
+pivot_offset = Vector2(469, 93)
+
+[node name="handframe" type="Sprite2D" parent="PanelContainer"]
+modulate = Color(1, 1, 1, 0.533333)
+position = Vector2(416.625, 74.3749)
+scale = Vector2(0.721137, 0.367022)
+texture = ExtResource("5_mhllw")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="player_ability" parent="." instance=ExtResource("13_18fj7")]
+offset_left = 1033.0
+offset_top = 708.0
+offset_right = 1093.0
+offset_bottom = 768.0
+scale = Vector2(2.44, 2.44)
+tooltip_text = "受到2点伤害,抽一张牌"
+mouse_default_cursor_shape = 2
+
+[node name="Player_Portrait" parent="." instance=ExtResource("13_hxdxn")]
+position = Vector2(58, 419)
+scale = Vector2(1.4727, 1.4727)
+
+[node name="enemy_portrait" parent="." instance=ExtResource("14_wqfm6")]
+position = Vector2(56, 11)
+scale = Vector2(1.90521, 1.86123)
+
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("15_iyygu")
+volume_db = -18.739
+
+[node name="pause_menu" parent="." instance=ExtResource("16_7miq7")]
+visible = false
+
+[node name="Card_description" parent="." instance=ExtResource("18_f8c3a")]
+position = Vector2(951, -2)
+scale = Vector2(1.48, 1.48)
+
+[node name="battle_result" parent="." instance=ExtResource("11_k8lyi")]
+visible = false
+
+[connection signal="pressed" from="endturn" to="." method="_on_startcombat_pressed"]
+[connection signal="timeout" from="TurnTimer" to="." method="_on_turn_timer_timeout"]
+[connection signal="pressed" from="player_ability" to="." method="_on_player_ability_pressed"]

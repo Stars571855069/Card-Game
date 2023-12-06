@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3 uid="uid://rjlvmlresg08"]
+
+[ext_resource type="Script" path="res://enemy_portrait.gd" id="1_8pbd0"]
+[ext_resource type="Texture2D" uid="uid://cjf86k48i6s2f" path="res://mapimage/enemysprite.jpg" id="2_p2anf"]
+
+[sub_resource type="Animation" id="Animation_y8g1o"]
+resource_name = "get_hurt"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.72549, 0.0313726, 0, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_l1pbo"]
+_data = {
+"get_hurt": SubResource("Animation_y8g1o")
+}
+
+[node name="enemy_portrait" type="Node2D"]
+script = ExtResource("1_8pbd0")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 114.0
+offset_bottom = 104.0
+
+[node name="Sprite2D" type="Sprite2D" parent="PanelContainer"]
+position = Vector2(56.875, 51.375)
+scale = Vector2(0.2214, 0.203649)
+texture = ExtResource("2_p2anf")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_l1pbo")
+}

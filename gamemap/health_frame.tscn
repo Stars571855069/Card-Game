@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://1rkcbowtcs55"]
+
+[ext_resource type="FontFile" uid="uid://vmp1130v7i47" path="res://fonts/MSYHBD.TTC" id="1_hg5aq"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_di20h"]
+font = ExtResource("1_hg5aq")
+font_size = 51
+font_color = Color(0, 0.780392, 0.317647, 1)
+outline_size = 12
+shadow_size = 0
+shadow_color = Color(0.392157, 0.392157, 0.392157, 1)
+
+[node name="HealthFrame" type="Node2D"]
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+offset_right = 278.0
+offset_bottom = 71.0
+
+[node name="Label" type="Label" parent="PanelContainer"]
+layout_mode = 2
+text = "生命值：0"
+label_settings = SubResource("LabelSettings_di20h")
+horizontal_alignment = 1
+vertical_alignment = 1

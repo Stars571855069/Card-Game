@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://bkivjjotvv1gf"]
+
+[ext_resource type="Script" path="res://cardtemplate/card_sigil.gd" id="1_c8wx0"]
+
+[node name="card_sigil" type="Node2D"]
+script = ExtResource("1_c8wx0")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(25, 25)
+offset_right = 40.0
+offset_bottom = 40.0
+pivot_offset = Vector2(12.5, 12.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="MarginContainer"]
+offset = Vector2(12.5, 12.5)
