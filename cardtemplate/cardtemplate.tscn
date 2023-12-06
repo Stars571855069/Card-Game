@@ -63,18 +63,12 @@ func cardload(a):
 	pass
 # Called when the node enters the scene tree for the first time.
 func card_ability_load():
-	var index=0
-	var exit_out=0
-	var temp_divide=1
+	var temp_divide=0
 	var data_base10=card_ability_sum
-	while(exit_out==0):
+	while(data_base10!=0):
 		temp_divide=data_base10%2
 		data_base10/=2
 		card_ability.append(temp_divide)
-		if(data_base10!=0):
-			index+=1
-		else:
-			exit_out=1
 	#sigil load in and create sigil sprite
 	var groupindex=0
 	for t in (card_ability):
@@ -140,8 +134,7 @@ func _on_cardcontrol_button_down():
 		is_right_click=0
 		
 func card_description_send():
-	#var targetnode=$\"//\"
-	#print(\"sending signal\")
+
 	var rootnode=get_node(\"/root/Gamemap\")
 	var rootnode2=get_node(\"/root/DeckCreateScene\")
 	if rootnode!=null:
