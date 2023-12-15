@@ -84,17 +84,13 @@ func _ready():
 	
 	$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
 	$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
-	
 	$BGMPlayer.play()
-	#self.connect(\"cardinfochange\",Callable(self,\"card_description_display\"))
-	
 	for index in Globalsetting.cardloadid:
 		cardcollection.append(Globalsetting.cardtemplate.get(index))
 	#print(cardcollection)
 	#--------------deck load-------------
 	var addcardindex:int=0
 	while (addcardindex<30) :
-		#var randomindex=randi_range(0,6)
 		deck.append(Globalsetting.player_global_deck[addcardindex])
 		addcardindex+=1
 	print(deck)
@@ -104,40 +100,16 @@ func _ready():
 	
 
 func _on_startcombat_pressed():
-	
 	player_turn_end()
 	$endturn.disabled=true
 	$endturn.text=\"敌方回合\"
 	#drawcards(1)
 
-
 #-------remove card from hand-------
 func remove_card_from_hand(card:Node2D):
 	hand.remove_at(card.cardslot-1)
-	handcardnode.remove_at(card.cardslot-1)
-	hand_re_list(card.cardslot)
-	print(card.cardslot)
-	#print(hand)
-	#hand.erase(card)
-	
-func hand_re_list(starting_index):
-	var startnumber=0
-	var maxindex=len(handcardnode)
-	print(\"Relisting cards \" + String.num_int64(len(handcardnode)))
-	print(\" Starting with slot \"+String.num_int64(starting_index))
-	#print(str(starting_index))
-	while (startnumber<maxindex):
-		if (startnumber>=starting_index-1):
-			#print(hand[startnumber].name)
-			#handcardnode[startnumber].global_position.x=handcardlocationX[startnumber]
-			handcardnode[startnumber].card_slide_in(handcardlocationX[startnumber])
-			handcardnode[startnumber].global_position.y=handcardlocationY[startnumber]
-			handcardnode[startnumber].cardslot-=1
-			#print(\"hand[\"+startnumber+\"] is relisted\")
-		startnumber+=1
-
-	
-
+	var parent_node = card.get_parent()
+	parent_node.queue_free()
 
 #------------draw cards-------------
 func drawcards(count:int):
@@ -151,21 +123,15 @@ func drawcards(count:int):
 				hand[len(hand)-1].cardslot=len(hand)
 				#print(hand[len(hand)-1].cardslot)
 				$DeckFrame/decklabel.text=\"剩余卡牌：\"+String.num_int64(len(deck))
+				var card_container=MarginContainer.new()
+				$PanelContainer/HBoxContainer.add_child(card_container)
+				card_container.custom_minimum_size.x=120
+				card_container.custom_minimum_size.y=150
 				var handcard=load(\"res://cardtemplate/cardtemplate.tscn\").instantiate()
 				handcard.name=\"handcard\"+str(len(hand)-1)
-				$PanelContainer/HBoxContainer.add_child(handcard)
-
-				var carddrawed=handcard
-				#carddrawed.global_position.x=handcardlocationX[len(hand)-1]
-				carddrawed.global_position.x=1255
-				carddrawed.global_position.y=handcardlocationY[len(hand)-1]
-				carddrawed.cardload(hand[len(hand)-1])
-				carddrawed.card_slide_in(handcardlocationX[len(hand)-1])
-				#carddrawed.activatecard()
-				handcardnode.append(carddrawed)
-				#self.connect(\"cardinfochange\",Callable(self,\"card_description_display\"))
-				#emit_signal(\"cardinfochange\")
-				print(str(len(handcardnode)))
+				card_container.add_child(handcard)
+				handcard.cardload(hand[len(hand)-1])
+				handcard.activatecard()
 				if len(deck)==0:
 					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://gamemap/emptydeck.png\")
 				elif len(deck)<=6:
@@ -233,15 +199,12 @@ func start_combat():
 			$enemy_portrait.get_hurt()
 		slot_index+=1
 	$TurnTimer.start(2)
-	#player_turn_start()
-	pass
 
 
 
 
 func _on_turn_timer_timeout():
 	player_turn_start()
-	pass # Replace with function body.
 	
 
 func enemy_play_card_first_time():
@@ -287,8 +250,14 @@ func card_combat(player_card:Node2D,enemy_card:Node2D):
 	enemy_card.animation_attack_down()
 	$visual_delay_timer.start(0.7)
 	await $visual_delay_timer.timeout
-	player_card.cardhealth-=enemy_card.cardattack
-	enemy_card.cardhealth-=player_card.cardattack
+	if len(player_card.card_ability)>=1 and player_card.card_ability[0]==1:
+		enemy_card.card_take_damage(player_card.cardattack,\"Poison\")
+	else:
+		enemy_card.card_take_damage(player_card.cardattack,\"Normal\")
+	if len(enemy_card.card_ability)>=1 and enemy_card.card_ability[0]==1:
+		player_card.card_take_damage(enemy_card.cardattack,\"Poison\")
+	else:
+		player_card.card_take_damage(enemy_card.cardattack,\"Normal\")
 	player_card.get_hurt()
 	enemy_card.get_hurt()
 	$visual_delay_timer.start(0.5)
@@ -350,7 +319,6 @@ func _on_player_ability_pressed():
 	player_take_damage(2)
 	$player_ability.disabled=true
 	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon_disabled.png\")
-	pass # Replace with function body.
 
 func card_description_display(card_description:String,card_name:String):
 	print(\"card description changed\")
@@ -614,8 +582,9 @@ scale = Vector2(0.721137, 0.367022)
 texture = ExtResource("5_mhllw")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+custom_minimum_size = Vector2(120, 155)
 layout_mode = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 25
 alignment = 1
 
 [node name="player_ability" parent="." instance=ExtResource("13_18fj7")]

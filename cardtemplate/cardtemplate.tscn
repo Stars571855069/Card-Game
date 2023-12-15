@@ -63,6 +63,7 @@ func cardload(a):
 	pass
 # Called when the node enters the scene tree for the first time.
 func card_ability_load():
+	#$sigil_container.remove_child()
 	var temp_divide=0
 	var data_base10=card_ability_sum
 	while(data_base10!=0):
@@ -79,10 +80,22 @@ func card_ability_load():
 			sigil_frame.custom_minimum_size.y=25
 			var sigil_added=load(\"res://cardtemplate/card_sigil.tscn\").instantiate()
 			sigil_frame.add_child(sigil_added)
+			sigil_frame.add_to_group(\"sigil_group\")
 			sigil_added.sigil_imageload(Globalsetting.global_sigil_image_route[groupindex])
 		groupindex+=1
 	pass
-	
+
+func card_ability_clear():
+	$sigil_container.free()
+	var newcontainer=HBoxContainer.new()
+	$\".\".add_child(newcontainer)
+	card_ability.clear()
+	newcontainer.name=\"sigil_container\"
+	newcontainer.size.x=70
+	newcontainer.size.y=30
+	newcontainer.position.x=15
+	newcontainer.position.y=115
+	newcontainer.alignment=BoxContainer.ALIGNMENT_CENTER
 
 func _ready():
 	$cardoutline.visible=false
@@ -141,8 +154,6 @@ func card_description_send():
 		rootnode.card_description_display(cardinfo,cardname)
 	else:
 		rootnode2.card_description_display(cardinfo,cardname)
-	#emit_signal(\"cardinfochange\",cardinfo)
-	#get_node(\"Gamemap\").card_description_display(cardinfo)
 	pass
 
 	
@@ -173,8 +184,6 @@ func animation_attack_up():
 	
 func animation_attack_down():
 	$card_attack.play(\"attack_down\")
-	#await $card_attack.animation_finished
-	#var a=1
 		
 func get_hurt():
 	$AnimationPlayer.play(\"card_take_damage\")
@@ -225,7 +234,25 @@ func _on_card_drop_in_timer_timeout():
 		$Card_drop_in_Timer.stop()
 		self.global_position.y=cardtargetY
 	pass # Replace with function body.
-
+	
+func card_take_damage(dmgamount:int,dmgtype:String):
+	var actual_damage:int
+	if dmgtype==\"Poison\":
+		actual_damage=9999
+	else:
+		actual_damage=dmgamount
+	#divine shield[ability(1)]
+	if len(card_ability)>=2 and card_ability[1]==1:
+		actual_damage=0
+		#card_ability[1]=0
+		card_ability_sum=card_ability_sum-2
+		card_ability_clear()
+		card_ability_load()
+		
+	cardhealth=cardhealth-actual_damage
+	if cardhealth<=0:
+		card_died()
+	pass
 
 
 
