@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dt3k282fhs172"]
+[gd_scene load_steps=20 format=3 uid="uid://dt3k282fhs172"]
 
 [ext_resource type="Texture2D" uid="uid://difmpm1ae5g44" path="res://mapimage/battlefield.png" id="1_8ttid"]
 [ext_resource type="Texture2D" uid="uid://bifu14xa2eb5r" path="res://mapimage/backupslot.png" id="1_16j7t"]
@@ -17,7 +17,6 @@
 [ext_resource type="PackedScene" uid="uid://rjlvmlresg08" path="res://gamemap/enemy_portrait.tscn" id="14_wqfm6"]
 [ext_resource type="AudioStream" uid="uid://bdivl06tl1q5o" path="res://Sound/Jonah Senzel - Botopia.mp3" id="15_iyygu"]
 [ext_resource type="PackedScene" uid="uid://d3ka3r5qm40d1" path="res://gamemap/pause_menu.tscn" id="16_7miq7"]
-[ext_resource type="PackedScene" uid="uid://cqr2vykemyxk1" path="res://gamemap/card_description.tscn" id="18_f8c3a"]
 
 [sub_resource type="GDScript" id="GDScript_pv5nh"]
 script/source = "extends Node
@@ -319,10 +318,6 @@ func _on_player_ability_pressed():
 	player_take_damage(2)
 	$player_ability.disabled=true
 	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon_disabled.png\")
-
-func card_description_display(card_description:String,card_name:String):
-	print(\"card description changed\")
-	$Card_description.description_set(card_description,card_name)
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_dnfcb"]
@@ -348,9 +343,9 @@ texture = ExtResource("1_8ttid")
 
 [node name="enemycardslot 1" type="ColorRect" parent="background"]
 layout_mode = 0
-offset_left = 337.0
+offset_left = 356.0
 offset_top = 188.0
-offset_right = 457.0
+offset_right = 476.0
 offset_bottom = 338.0
 
 [node name="enemybackupcardslot 1" type="ColorRect" parent="background/enemycardslot 1"]
@@ -376,9 +371,9 @@ texture = ExtResource("2_phmov")
 
 [node name="enemycardslot 2" type="ColorRect" parent="background"]
 layout_mode = 0
-offset_left = 481.0
+offset_left = 571.0
 offset_top = 187.0
-offset_right = 601.0
+offset_right = 691.0
 offset_bottom = 337.0
 
 [node name="enemybackupcardslot 2" type="ColorRect" parent="background/enemycardslot 2"]
@@ -405,9 +400,9 @@ position = Vector2(2, 0)
 
 [node name="enemycardslot 3" type="ColorRect" parent="background"]
 layout_mode = 0
-offset_left = 628.0
+offset_left = 792.0
 offset_top = 188.0
-offset_right = 748.0
+offset_right = 912.0
 offset_bottom = 338.0
 
 [node name="enemybackupcardslot 3" type="ColorRect" parent="background/enemycardslot 3"]
@@ -433,9 +428,9 @@ texture = ExtResource("2_phmov")
 
 [node name="enemycardslot 4" type="ColorRect" parent="background"]
 layout_mode = 0
-offset_left = 773.0
+offset_left = 1001.0
 offset_top = 188.0
-offset_right = 893.0
+offset_right = 1121.0
 offset_bottom = 338.0
 scale = Vector2(0.996324, 1)
 
@@ -466,9 +461,9 @@ scale = Vector2(1.00369, 1)
 
 [node name="playcardslot 1" type="ColorRect" parent="background"]
 layout_mode = 0
-offset_left = 341.0
+offset_left = 365.0
 offset_top = 410.0
-offset_right = 461.0
+offset_right = 485.0
 offset_bottom = 560.0
 
 [node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 1"]
@@ -480,9 +475,9 @@ texture = ExtResource("2_phmov")
 
 [node name="playcardslot 2" type="ColorRect" parent="background"]
 layout_mode = 0
-offset_left = 487.0
+offset_left = 580.0
 offset_top = 410.0
-offset_right = 607.0
+offset_right = 700.0
 offset_bottom = 560.0
 
 [node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 2"]
@@ -495,9 +490,9 @@ position = Vector2(-2, -2)
 
 [node name="playcardslot 3" type="ColorRect" parent="background"]
 layout_mode = 0
-offset_left = 629.0
+offset_left = 798.0
 offset_top = 410.0
-offset_right = 749.0
+offset_right = 918.0
 offset_bottom = 560.0
 
 [node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 3"]
@@ -510,9 +505,9 @@ position = Vector2(-2, 0)
 
 [node name="playcardslot 4" type="ColorRect" parent="background"]
 layout_mode = 0
-offset_left = 774.0
+offset_left = 1002.0
 offset_top = 410.0
-offset_right = 894.0
+offset_right = 1122.0
 offset_bottom = 560.0
 
 [node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 4"]
@@ -530,7 +525,7 @@ position = Vector2(292, 617)
 position = Vector2(34, 207)
 
 [node name="PlayerHealthFrame" parent="background" instance=ExtResource("8_rmj8r")]
-position = Vector2(37, 344)
+position = Vector2(34, 344)
 
 [node name="endturn" type="Button" parent="."]
 offset_left = 743.0
@@ -611,10 +606,6 @@ volume_db = -18.739
 
 [node name="pause_menu" parent="." instance=ExtResource("16_7miq7")]
 visible = false
-
-[node name="Card_description" parent="." instance=ExtResource("18_f8c3a")]
-position = Vector2(951, -2)
-scale = Vector2(1.48, 1.48)
 
 [node name="battle_result" parent="." instance=ExtResource("11_k8lyi")]
 visible = false

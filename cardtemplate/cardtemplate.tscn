@@ -52,7 +52,7 @@ func cardload(a):
 	
 	
 	get_node(\"ColorRect/cardcostframe/costlabel\").text=String.num_int64(cardcost)
-	get_node(\"ColorRect/cardnameframe/namelabel\").text=cardname
+	get_node(\"ColorRect/namelabel\").text=cardname
 	get_node(\"ColorRect/cardattackframe/attacklabel\").text=String.num_int64(cardattack)
 	get_node(\"ColorRect/cardhealthframe/healthlabel\").text=String.num_int64(cardhealth)
 	#get_node(\"ColorRect/cardinfoframe/textcontainer/infolabel\").text=cardinfo
@@ -258,6 +258,19 @@ func card_take_damage(dmgamount:int,dmgtype:String):
 
 
 
+
+
+func _on_cardcontrol_mouse_entered():
+	var newpopup=load(\"res://cardtemplate/card_descrption_popup.tscn\").instantiate()
+	$\".\".add_child(newpopup)
+	newpopup.name=\"cardinfo\"
+	newpopup.description_set(cardinfo)
+	newpopup.spawn()
+
+
+func _on_cardcontrol_mouse_exited():
+	get_node(\"cardinfo\").queue_free()
+	pass # Replace with function body.
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_1nyig"]
@@ -273,10 +286,10 @@ font_size = 24
 font_color = Color(0.0784314, 0.698039, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_e8skl"]
+line_spacing = 1.0
 font = ExtResource("2_fy46u")
-font_size = 36
-font_color = Color(0, 0, 0, 1)
-shadow_size = 2
+font_size = 17
+font_color = Color(0.160784, 0.160784, 0.160784, 1)
 shadow_color = Color(0.364706, 0.364706, 0.364706, 1)
 shadow_offset = Vector2(1.8, 1.35)
 
@@ -505,16 +518,17 @@ offset_bottom = 178.0
 scale = Vector2(2.66943, 0.411679)
 color = Color(0.721569, 1, 0.85098, 1)
 
-[node name="namelabel" type="Label" parent="ColorRect/cardnameframe"]
-layout_mode = 0
-offset_top = 2.0
-offset_right = 123.0
-offset_bottom = 67.0
-scale = Vector2(0.328125, 1.44823)
-text = "card"
+[node name="namelabel" type="Label" parent="ColorRect"]
+layout_mode = 2
+offset_left = 7.0
+offset_top = 81.0
+offset_right = 114.0
+offset_bottom = 120.0
+text = "Aluna"
 label_settings = SubResource("LabelSettings_e8skl")
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
 
 [node name="cardcontrol" type="Button" parent="."]
 offset_left = -11.0
@@ -549,6 +563,8 @@ alignment = 1
 
 [connection signal="cardinfochange" from="." to="." method="_on_cardinfochange"]
 [connection signal="button_down" from="cardcontrol" to="." method="_on_cardcontrol_button_down"]
+[connection signal="mouse_entered" from="cardcontrol" to="." method="_on_cardcontrol_mouse_entered"]
+[connection signal="mouse_exited" from="cardcontrol" to="." method="_on_cardcontrol_mouse_exited"]
 [connection signal="pressed" from="cardcontrol" to="." method="_on_cardcontrol_pressed"]
 [connection signal="timeout" from="Card_Slide_in_Timer" to="." method="_on_card_slide_in_timer_timeout"]
 [connection signal="timeout" from="Card_drop_in_Timer" to="." method="_on_card_drop_in_timer_timeout"]

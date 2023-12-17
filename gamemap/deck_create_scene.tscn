@@ -1,10 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://cu5nt5lp11ppp"]
+[gd_scene load_steps=9 format=3 uid="uid://cu5nt5lp11ppp"]
 
 [ext_resource type="Script" path="res://gamemap/deck_create_scene.gd" id="1_6o0my"]
 [ext_resource type="Texture2D" uid="uid://qmdux3g3wi65" path="res://gamemap/deckcreation_background.png" id="1_7pif8"]
 [ext_resource type="Texture2D" uid="uid://bbt8dm57rthwg" path="res://mapimage/enptyslot.png" id="3_i1jhm"]
 [ext_resource type="PackedScene" uid="uid://bdutau7fea8r0" path="res://gamemap/enpty_slot_controller.tscn" id="4_3wlur"]
-[ext_resource type="PackedScene" uid="uid://cqr2vykemyxk1" path="res://gamemap/card_description.tscn" id="5_leq6v"]
 [ext_resource type="FontFile" uid="uid://sshyf2b4qqgp" path="res://fonts/MSYHSB.TTC" id="6_7uf24"]
 [ext_resource type="AudioStream" uid="uid://chso6552bm30t" path="res://Sound/Jonah Senzel - Cardplay.mp3" id="6_8rvtq"]
 
@@ -70,10 +69,6 @@ scale = Vector2(0.316496, 0.362864)
 texture = ExtResource("3_i1jhm")
 
 [node name="emptyslot3" parent="Pending_cardslot 3" instance=ExtResource("4_3wlur")]
-
-[node name="Card_description" parent="." instance=ExtResource("5_leq6v")]
-position = Vector2(1110, 0)
-scale = Vector2(1.13649, 1.17191)
 
 [node name="ButtonSelect 1" type="Button" parent="."]
 offset_left = 465.0

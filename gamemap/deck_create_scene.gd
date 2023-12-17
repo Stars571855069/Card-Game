@@ -118,7 +118,3 @@ func _on_button_pressed():
 	Globalsetting.player_turn=true
 	get_tree().change_scene_to_file("res://gamemap/gamemap.tscn")
 	pass # Replace with function body.
-
-func card_description_display(card_description:String,card_name:String):
-	print("card description changed")
-	$Card_description.description_set(card_description,card_name)
