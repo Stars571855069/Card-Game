@@ -145,6 +145,26 @@ func drawcards(count:int):
 			drawindex+=1
 	else:
 		print(\"invalid draw count\")
+		
+func give_card(cardID:String):
+	if(len(hand)<handlimit):
+		for cardindex in Globalsetting.cardloadid:
+			if cardindex==cardID:
+				hand.append(Globalsetting.cardtemplate.get(cardindex))
+				hand[len(hand)-1].cardslot=len(hand)
+				$DeckFrame/decklabel.text=\"剩余卡牌：\"+String.num_int64(len(deck))
+				var card_container=MarginContainer.new()
+				$PanelContainer/HBoxContainer.add_child(card_container)
+				card_container.custom_minimum_size.x=120
+				card_container.custom_minimum_size.y=150
+				var handcard=load(\"res://cardtemplate/cardtemplate.tscn\").instantiate()
+				handcard.name=\"handcard\"+str(len(hand)-1)
+				card_container.add_child(handcard)
+				handcard.cardload(hand[len(hand)-1])
+				handcard.activatecard()
+	else:
+		print(\"hand is full\")
+	
 
 
 func player_turn_start():
@@ -315,6 +335,7 @@ func _physics_process(delta):
 func _on_player_ability_pressed():
 	print(\"ability triggered\")
 	drawcards(1)
+	#give_card(\"card15\")
 	player_take_damage(2)
 	$player_ability.disabled=true
 	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon_disabled.png\")

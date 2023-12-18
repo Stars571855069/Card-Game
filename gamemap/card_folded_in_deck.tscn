@@ -92,4 +92,6 @@ offset_right = 198.0
 offset_bottom = 35.0
 color = Color(0.458824, 0.458824, 0.458824, 1)
 
+[connection signal="mouse_entered" from="Card_Control" to="." method="_on_card_control_mouse_entered"]
+[connection signal="mouse_exited" from="Card_Control" to="." method="_on_card_control_mouse_exited"]
 [connection signal="pressed" from="Card_Control" to="." method="_on_card_control_pressed"]

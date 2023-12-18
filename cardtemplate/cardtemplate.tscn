@@ -11,32 +11,21 @@ var cardname:String
 var cardcost:int
 var cardattack:int
 var cardhealth:int
-var cardinfo:String
 var cardsprite:String
 var cardslot:int
+var cardrarity:int
 var card_index_when_pciked:int
 var is_right_click=0
 var card_ability_sum:int
 var card_ability:Array=[]
 
 var cardactivated:bool=false
+var owned_by_player:bool=false
 var cardselected:bool=false
 var cardmoving:bool=false
 var cardtargetX:int
 var cardtargetY:int
-
-#---------card ability---------
-#  0 = null
-#  1 (0)= Poisonous
-#  2 (1)= Devine Shield
-#  4 (2)= Triple Attack
-#  8 (3)= Give a random card when died
-#  16 (4)= Return to hand when died
-#  32 (5)= Leave a bomb when died
-#  64 (6)= Destroy opposite card when died
-#  128(7) = Give a rabbit card when died
-#-------------------------------
-
+#export(\"res://gamemap/gamemap.tscn\") var rootnode
 signal cardinfochange
 
 func cardload(a):
@@ -44,23 +33,27 @@ func cardload(a):
 	cardcost=a.get(\"cardcost\")
 	cardattack=a.get(\"cardattack\")
 	cardhealth=a.get(\"cardhealth\")
-	cardinfo=a.get(\"cardinfo\")
 	cardsprite=a.get(\"cardsprite\")
 	cardslot=a.get(\"cardslot\")
+	cardrarity=a.get(\"cardrarity\")
 	card_ability_sum=a.get(\"cardability\")
 	print(cardslot)
+	if cardrarity==0:
+		$ColorRect/cardnameframe.color=Color.html(\"#b8ffd9\")
+	elif cardrarity==1:
+		$ColorRect/cardnameframe.color=Color.html(\"#ddfa99\")
+	elif cardrarity==2:
+		$ColorRect/cardnameframe.color=Color.html(\"#b1fcfa\")
+	else:
+		$ColorRect/cardnameframe.color=Color.html(\"#f0b95f\")
 	
 	
 	get_node(\"ColorRect/cardcostframe/costlabel\").text=String.num_int64(cardcost)
 	get_node(\"ColorRect/namelabel\").text=cardname
 	get_node(\"ColorRect/cardattackframe/attacklabel\").text=String.num_int64(cardattack)
 	get_node(\"ColorRect/cardhealthframe/healthlabel\").text=String.num_int64(cardhealth)
-	#get_node(\"ColorRect/cardinfoframe/textcontainer/infolabel\").text=cardinfo
 	get_node(\"ColorRect/cardimageframe/CenterContainer/cardsprite\").texture=load(cardsprite)
-	#$ColorRect/cardimageframe/CenterContainer/cardsprite.scale.x=0.279
-	#$ColorRect/cardimageframe/CenterContainer/cardsprite.scale.y=0.249
 	card_ability_load()
-	pass
 # Called when the node enters the scene tree for the first time.
 func card_ability_load():
 	#$sigil_container.remove_child()
@@ -99,15 +92,7 @@ func card_ability_clear():
 
 func _ready():
 	$cardoutline.visible=false
-	var rootnode=get_node(\"/root/Gamemap\")
-	#print(rootnode)
-	self.connect(\"cardinfochange\",Callable(rootnode,\"card_description_display\"))
-	pass # Replace with function body.
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
 	
 func removefromhand():
 	var parent_node = self.get_parent()
@@ -134,27 +119,14 @@ func _on_cardcontrol_pressed():
 		print(name+\" is selected successfully\")
 	if is_right_click==1 :
 		print((name+\" is right clicked\"))
-		#print(get_node(\"/root/Gamemap\"))
-		card_description_send()
 		
 func _on_cardcontrol_button_down():
 	var clickcheck=Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	if clickcheck:
-		#print(\"Right click card\")
 		is_right_click=1
 	else:
 		#print(\"Left click card\")
 		is_right_click=0
-		
-func card_description_send():
-
-	var rootnode=get_node(\"/root/Gamemap\")
-	var rootnode2=get_node(\"/root/DeckCreateScene\")
-	if rootnode!=null:
-		rootnode.card_description_display(cardinfo,cardname)
-	else:
-		rootnode2.card_description_display(cardinfo,cardname)
-	pass
 
 	
 func _physics_process(delta):
@@ -189,6 +161,10 @@ func get_hurt():
 	$AnimationPlayer.play(\"card_take_damage\")
 		
 func card_died():
+	if len(card_ability)>=4 and card_ability[3]==1 and owned_by_player==true:
+		var randomcardID:String=\"card\"+String.num_int64(randi_range(0,len(Globalsetting.cardloadid)))
+		var rootnode=get_node(\"/root/Gamemap\")
+		rootnode.give_card(randomcardID)
 	print(self.name+\" died\")
 	$AnimationPlayer.play(\"card_died\")
 	await $AnimationPlayer.animation_finished
@@ -264,13 +240,14 @@ func _on_cardcontrol_mouse_entered():
 	var newpopup=load(\"res://cardtemplate/card_descrption_popup.tscn\").instantiate()
 	$\".\".add_child(newpopup)
 	newpopup.name=\"cardinfo\"
-	newpopup.description_set(cardinfo)
+	newpopup.description_set(cardname,card_ability_sum)
 	newpopup.spawn()
 
 
 func _on_cardcontrol_mouse_exited():
-	get_node(\"cardinfo\").queue_free()
-	pass # Replace with function body.
+	var activeted_info=get_node(\"cardinfo\")
+	if activeted_info!=null:
+		activeted_info.queue_free()
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_1nyig"]
@@ -516,7 +493,7 @@ offset_top = 81.0
 offset_right = 47.0
 offset_bottom = 178.0
 scale = Vector2(2.66943, 0.411679)
-color = Color(0.721569, 1, 0.85098, 1)
+color = Color(0.941176, 0.72549, 0.372549, 1)
 
 [node name="namelabel" type="Label" parent="ColorRect"]
 layout_mode = 2
@@ -556,9 +533,9 @@ libraries = {
 
 [node name="sigil_container" type="HBoxContainer" parent="."]
 offset_left = 15.0
-offset_top = 115.0
+offset_top = 117.0
 offset_right = 85.0
-offset_bottom = 145.0
+offset_bottom = 147.0
 alignment = 1
 
 [connection signal="cardinfochange" from="." to="." method="_on_cardinfochange"]

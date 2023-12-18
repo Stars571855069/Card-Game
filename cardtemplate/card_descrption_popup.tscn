@@ -1,6 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://ctvxh6e7en27r"]
+[gd_scene load_steps=8 format=3 uid="uid://ctvxh6e7en27r"]
 
 [ext_resource type="Script" path="res://Card_descrption_popup.gd" id="1_b18h6"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_j4ago"]
+shadow_size = 7
+shadow_color = Color(0.211765, 0.211765, 0.211765, 0.709804)
+
+[sub_resource type="LabelSettings" id="LabelSettings_eo600"]
+font_size = 20
+outline_size = 1
+outline_color = Color(0.341176, 0.341176, 0.341176, 1)
+shadow_size = 4
+shadow_color = Color(0.14902, 0.14902, 0.14902, 0.862745)
 
 [sub_resource type="Animation" id="Animation_xm8v4"]
 resource_name = "spawn"
@@ -51,15 +62,37 @@ position = Vector2(130, -150)
 script = ExtResource("1_b18h6")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-self_modulate = Color(0.396078, 0.396078, 0.396078, 0.635294)
+self_modulate = Color(0.396078, 0.396078, 0.396078, 0.85098)
 offset_right = 240.0
 offset_bottom = 300.0
 pivot_offset = Vector2(0, 150)
 
+[node name="line" type="Label" parent="ColorRect"]
+layout_mode = 0
+offset_top = 29.0
+offset_right = 240.0
+offset_bottom = 55.0
+theme_override_constants/shadow_offset_x = 1
+theme_override_font_sizes/font_size = 16
+text = "———————————————"
+label_settings = SubResource("LabelSettings_j4ago")
+
+[node name="cardname" type="Label" parent="ColorRect"]
+layout_mode = 0
+offset_right = 238.0
+offset_bottom = 40.0
+text = "cardname"
+label_settings = SubResource("LabelSettings_eo600")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="RichTextLabel" type="RichTextLabel" parent="ColorRect"]
 layout_mode = 0
-offset_right = 241.0
-offset_bottom = 299.0
+offset_left = 9.0
+offset_top = 53.0
+offset_right = 232.0
+offset_bottom = 293.0
+bbcode_enabled = true
 fit_content = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
