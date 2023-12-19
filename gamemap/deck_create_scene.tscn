@@ -1,21 +1,21 @@
 [gd_scene load_steps=9 format=3 uid="uid://cu5nt5lp11ppp"]
 
 [ext_resource type="Script" path="res://gamemap/deck_create_scene.gd" id="1_6o0my"]
-[ext_resource type="Texture2D" uid="uid://qmdux3g3wi65" path="res://gamemap/deckcreation_background.png" id="1_7pif8"]
-[ext_resource type="Texture2D" uid="uid://bbt8dm57rthwg" path="res://mapimage/enptyslot.png" id="3_i1jhm"]
+[ext_resource type="Texture2D" uid="uid://qmdux3g3wi65" path="res://resource/image/mapimage/deckcreation_background.png" id="2_hvb8i"]
+[ext_resource type="Texture2D" uid="uid://bbt8dm57rthwg" path="res://resource/image/mapimage/enptyslot.png" id="3_8n55w"]
 [ext_resource type="PackedScene" uid="uid://bdutau7fea8r0" path="res://gamemap/enpty_slot_controller.tscn" id="4_3wlur"]
-[ext_resource type="FontFile" uid="uid://sshyf2b4qqgp" path="res://fonts/MSYHSB.TTC" id="6_7uf24"]
-[ext_resource type="AudioStream" uid="uid://chso6552bm30t" path="res://Sound/Jonah Senzel - Cardplay.mp3" id="6_8rvtq"]
+[ext_resource type="FontFile" uid="uid://sshyf2b4qqgp" path="res://resource/fonts/MSYHSB.TTC" id="5_er8fo"]
+[ext_resource type="AudioStream" uid="uid://chso6552bm30t" path="res://resource/Sound/Jonah Senzel - Cardplay.mp3" id="6_c856l"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_djhpx"]
-font = ExtResource("6_7uf24")
+font = ExtResource("5_er8fo")
 font_size = 56
 font_color = Color(0.00784314, 0.00784314, 0.00784314, 1)
 shadow_size = 6
 shadow_color = Color(0.239216, 0.239216, 0.239216, 0.592157)
 
 [sub_resource type="LabelSettings" id="LabelSettings_cp6fd"]
-font = ExtResource("6_7uf24")
+font = ExtResource("5_er8fo")
 font_size = 26
 font_color = Color(0.517647, 0.376471, 1, 1)
 shadow_size = 6
@@ -28,7 +28,7 @@ metadata/_edit_horizontal_guides_ = [355.0, 505.0, 536.0, 585.0]
 
 [node name="background_image" type="Sprite2D" parent="."]
 position = Vector2(804, 451)
-texture = ExtResource("1_7pif8")
+texture = ExtResource("2_hvb8i")
 metadata/_edit_lock_ = true
 
 [node name="Pending_cardslot 1" type="ColorRect" parent="."]
@@ -40,7 +40,7 @@ offset_bottom = 506.0
 [node name="Sprite2D" type="Sprite2D" parent="Pending_cardslot 1"]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("3_i1jhm")
+texture = ExtResource("3_8n55w")
 
 [node name="emptyslot1" parent="Pending_cardslot 1" instance=ExtResource("4_3wlur")]
 
@@ -53,7 +53,7 @@ offset_bottom = 505.0
 [node name="Sprite2D" type="Sprite2D" parent="Pending_cardslot 2"]
 position = Vector2(58.5625, 74.625)
 scale = Vector2(0.314258, 0.365898)
-texture = ExtResource("3_i1jhm")
+texture = ExtResource("3_8n55w")
 
 [node name="emptyslot2" parent="Pending_cardslot 2" instance=ExtResource("4_3wlur")]
 
@@ -66,7 +66,7 @@ offset_bottom = 507.0
 [node name="Sprite2D" type="Sprite2D" parent="Pending_cardslot 3"]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("3_i1jhm")
+texture = ExtResource("3_8n55w")
 
 [node name="emptyslot3" parent="Pending_cardslot 3" instance=ExtResource("4_3wlur")]
 
@@ -130,7 +130,7 @@ offset_bottom = 486.0
 text = "开始战斗"
 
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("6_8rvtq")
+stream = ExtResource("6_c856l")
 
 [connection signal="pressed" from="ButtonSelect 1" to="." method="_on_button_select_1_pressed"]
 [connection signal="pressed" from="ButtonSelect 2" to="." method="_on_button_select_2_pressed"]

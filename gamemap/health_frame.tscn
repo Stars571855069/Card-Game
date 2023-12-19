@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://1rkcbowtcs55"]
 
-[ext_resource type="FontFile" uid="uid://vmp1130v7i47" path="res://fonts/MSYHBD.TTC" id="1_hg5aq"]
+[ext_resource type="FontFile" uid="uid://vmp1130v7i47" path="res://resource/fonts/MSYHBD.TTC" id="1_lnifb"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_di20h"]
-font = ExtResource("1_hg5aq")
+font = ExtResource("1_lnifb")
 font_size = 51
 font_color = Color(0, 0.780392, 0.317647, 1)
 outline_size = 12

@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://eh7jxly0yw6e"]
 
-[ext_resource type="Texture2D" uid="uid://bog8d1ed4bjuu" path="res://gamemap/abilityicon.png" id="1_a7pxw"]
-[ext_resource type="FontFile" uid="uid://sshyf2b4qqgp" path="res://fonts/MSYHSB.TTC" id="2_0jkbv"]
+[ext_resource type="Texture2D" uid="uid://bog8d1ed4bjuu" path="res://resource/image/mapimage/abilityicon.png" id="1_f72hh"]
+[ext_resource type="FontFile" uid="uid://sshyf2b4qqgp" path="res://resource/fonts/MSYHSB.TTC" id="2_d5gry"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_15otm"]
-font = ExtResource("2_0jkbv")
+font = ExtResource("2_d5gry")
 font_color = Color(0, 0, 0, 1)
 outline_size = 1
 
@@ -16,7 +16,7 @@ offset_bottom = 60.0
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(30, 30)
 scale = Vector2(1.1, 1.1)
-texture = ExtResource("1_a7pxw")
+texture = ExtResource("1_f72hh")
 
 [node name="tooltip" type="PanelContainer" parent="."]
 visible = false

@@ -1,21 +1,21 @@
 [gd_scene load_steps=5 format=3 uid="uid://bd8rp1rpdk21q"]
 
-[ext_resource type="Script" path="res://Card_Folded_in_Deck.gd" id="1_tjc7a"]
-[ext_resource type="FontFile" uid="uid://vnepa6rklonj" path="res://fonts/MSYHHV.TTC" id="2_t85ii"]
+[ext_resource type="Script" path="res://cardtemplate/Card_Folded_in_Deck.gd" id="1_ybjeg"]
+[ext_resource type="FontFile" uid="uid://vnepa6rklonj" path="res://resource/fonts/MSYHHV.TTC" id="2_dl8jr"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4t1sw"]
-font = ExtResource("2_t85ii")
+font = ExtResource("2_dl8jr")
 font_size = 15
 font_color = Color(0.0352941, 0.545098, 0.858824, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_pabog"]
-font = ExtResource("2_t85ii")
+font = ExtResource("2_dl8jr")
 font_size = 14
 font_color = Color(0, 0, 0, 1)
 shadow_color = Color(0.278431, 0.278431, 0.278431, 0.282353)
 
 [node name="Card_Folded_in_Deck" type="Node2D"]
-script = ExtResource("1_tjc7a")
+script = ExtResource("1_ybjeg")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 custom_minimum_size = Vector2(200, 35)

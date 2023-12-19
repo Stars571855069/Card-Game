@@ -1,21 +1,21 @@
 [gd_scene load_steps=20 format=3 uid="uid://dt3k282fhs172"]
 
-[ext_resource type="Texture2D" uid="uid://difmpm1ae5g44" path="res://mapimage/battlefield.png" id="1_8ttid"]
-[ext_resource type="Texture2D" uid="uid://bifu14xa2eb5r" path="res://mapimage/backupslot.png" id="1_16j7t"]
-[ext_resource type="Texture2D" uid="uid://bbt8dm57rthwg" path="res://mapimage/enptyslot.png" id="2_phmov"]
+[ext_resource type="Texture2D" uid="uid://difmpm1ae5g44" path="res://resource/image/mapimage/battlefield.png" id="1_hbbhf"]
+[ext_resource type="Texture2D" uid="uid://bifu14xa2eb5r" path="res://resource/image/mapimage/backupslot.png" id="2_y7xhl"]
 [ext_resource type="PackedScene" uid="uid://dhjsbo4m08ruk" path="res://gamemap/enemybackupslot.tscn" id="3_xtria"]
-[ext_resource type="FontFile" uid="uid://bnwvmpnygcfyy" path="res://fonts/MSYH.TTC" id="4_lismf"]
+[ext_resource type="Texture2D" uid="uid://bbt8dm57rthwg" path="res://resource/image/mapimage/enptyslot.png" id="4_jrgar"]
 [ext_resource type="PackedScene" uid="uid://bdutau7fea8r0" path="res://gamemap/enpty_slot_controller.tscn" id="4_t4gll"]
 [ext_resource type="PackedScene" uid="uid://dlh2p3y7plprv" path="res://gamemap/enemycardslot.tscn" id="4_vja44"]
-[ext_resource type="Texture2D" uid="uid://dk8l33r58i5yf" path="res://gamemap/handframe.png" id="5_mhllw"]
 [ext_resource type="PackedScene" uid="uid://ce00ydiipi31w" path="res://gamemap/manaframe.tscn" id="5_xjxp5"]
 [ext_resource type="PackedScene" uid="uid://1rkcbowtcs55" path="res://gamemap/health_frame.tscn" id="8_rmj8r"]
-[ext_resource type="Texture2D" uid="uid://1aoaxd668k1j" path="res://gamemap/deck.png" id="9_mvfhw"]
+[ext_resource type="Texture2D" uid="uid://1aoaxd668k1j" path="res://resource/image/mapimage/deck.png" id="9_7gep0"]
+[ext_resource type="FontFile" uid="uid://bnwvmpnygcfyy" path="res://resource/fonts/MSYH.TTC" id="10_kn72v"]
 [ext_resource type="PackedScene" uid="uid://b30051q8urhy3" path="res://gamemap/battle_result.tscn" id="11_k8lyi"]
+[ext_resource type="Texture2D" uid="uid://dk8l33r58i5yf" path="res://resource/image/mapimage/handframe.png" id="11_s874x"]
 [ext_resource type="PackedScene" uid="uid://eh7jxly0yw6e" path="res://gamemap/player_ability.tscn" id="13_18fj7"]
 [ext_resource type="PackedScene" uid="uid://dphwwvlmueqmg" path="res://gamemap/hero_portrait.tscn" id="13_hxdxn"]
 [ext_resource type="PackedScene" uid="uid://rjlvmlresg08" path="res://gamemap/enemy_portrait.tscn" id="14_wqfm6"]
-[ext_resource type="AudioStream" uid="uid://bdivl06tl1q5o" path="res://Sound/Jonah Senzel - Botopia.mp3" id="15_iyygu"]
+[ext_resource type="AudioStream" uid="uid://bdivl06tl1q5o" path="res://resource/Sound/Jonah Senzel - Botopia.mp3" id="15_kayis"]
 [ext_resource type="PackedScene" uid="uid://d3ka3r5qm40d1" path="res://gamemap/pause_menu.tscn" id="16_7miq7"]
 
 [sub_resource type="GDScript" id="GDScript_pv5nh"]
@@ -105,8 +105,15 @@ func _on_startcombat_pressed():
 	#drawcards(1)
 
 #-------remove card from hand-------
-func remove_card_from_hand(card:Node2D):
-	hand.remove_at(card.cardslot-1)
+func remove_card_from_hand(slotindex:int,card:Node2D):
+	hand.remove_at(slotindex-1)
+	handcardnode.remove_at(slotindex-1)
+	var i=0
+	var maxindex=len(handcardnode)
+	while(i<maxindex):
+		if i>=slotindex-1:
+			handcardnode[i].cardslot-=1
+		i+=1
 	var parent_node = card.get_parent()
 	parent_node.queue_free()
 
@@ -130,13 +137,15 @@ func drawcards(count:int):
 				handcard.name=\"handcard\"+str(len(hand)-1)
 				card_container.add_child(handcard)
 				handcard.cardload(hand[len(hand)-1])
+				handcardnode.append(handcard)
+				handcard.cardslot=len(hand)
 				handcard.activatecard()
 				if len(deck)==0:
-					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://gamemap/emptydeck.png\")
+					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://resource/image/mapimage/emptydeck.png\")
 				elif len(deck)<=6:
-					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://gamemap/deckalmostempty.png\")
+					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://resource/image/mapimage/deckalmostempty.png\")
 				elif len(deck)<=15:
-					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://gamemap/deckhalf.png\")
+					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://resource/image/mapimage/deckhalf.png\")
 			elif ((len(deck)>0)):
 				print(\"hand is full\")
 			else:
@@ -159,8 +168,11 @@ func give_card(cardID:String):
 				card_container.custom_minimum_size.y=150
 				var handcard=load(\"res://cardtemplate/cardtemplate.tscn\").instantiate()
 				handcard.name=\"handcard\"+str(len(hand)-1)
+				handcard.cardslot=len(handcardnode)
 				card_container.add_child(handcard)
 				handcard.cardload(hand[len(hand)-1])
+				handcardnode.append(handcard)
+				#hand.append(handcard)
 				handcard.activatecard()
 	else:
 		print(\"hand is full\")
@@ -173,7 +185,7 @@ func player_turn_start():
 	$endturn.text=\"结束回合\"
 	Globalsetting.player_turn=true
 	$player_ability.disabled=false
-	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon.png\")
+	$player_ability/Sprite2D.texture=load(\"res://resource/image/mapimage/abilityicon.png\")
 	Globalsetting.current_turn+=1
 	if Globalsetting.max_mana<Globalsetting.mana_max_limit:
 		Globalsetting.max_mana+=1
@@ -186,7 +198,7 @@ func player_turn_start():
 func player_turn_end():
 	Globalsetting.player_turn=false
 	$player_ability.disabled=true
-	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon_disabled.png\")
+	$player_ability/Sprite2D.texture=load(\"res://resource/image/mapimage/abilityicon_disabled.png\")
 	
 	if Globalsetting.current_turn==1:
 		enemy_play_card_first_time()
@@ -209,11 +221,13 @@ func start_combat():
 		elif enemycardslot[slot_index].slot_is_empty==false and playercardslot[slot_index].slot_is_empty==true:
 			var enemy_card=enemycardslot[slot_index].get_child(1)
 			enemy_card.animation_attack_down()
+			enemy_card.card_attack_action(null)
 			player_take_damage(enemy_card.cardattack)
 			$Player_Portrait.get_hurt()
 		elif enemycardslot[slot_index].slot_is_empty==true and playercardslot[slot_index].slot_is_empty==false:
 			var player_card=playercardslot[slot_index].get_child(1)
 			player_card.animation_attack_up()
+			player_card.card_attack_action(null)
 			enemy_take_damage(player_card.cardattack)
 			$enemy_portrait.get_hurt()
 		slot_index+=1
@@ -266,6 +280,8 @@ func enemy_play_card():
 func card_combat(player_card:Node2D,enemy_card:Node2D):
 	#var visual_delay=get_tree().create_timer
 	player_card.animation_attack_up()
+	player_card.card_attack_action(enemy_card)
+	enemy_card.card_attack_action(player_card)
 	enemy_card.animation_attack_down()
 	$visual_delay_timer.start(0.7)
 	await $visual_delay_timer.timeout
@@ -288,10 +304,21 @@ func player_take_damage(damage:int):
 	if player_is_invulnerable==false:
 		Globalsetting.player_health-=damage
 	$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
-	
 	if Globalsetting.player_health<=0:
 		player_lost()
-	pass
+		
+func player_heal(amount:int,targetplayer:int):
+	if targetplayer==1:
+		Globalsetting.player_health+=amount
+		if Globalsetting.player_health>Globalsetting.player_health_limit:
+			Globalsetting.player_health=Globalsetting.player_health_limit
+		$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
+	else:
+		Globalsetting.enemy_health+=amount
+		if Globalsetting.enemy_health>Globalsetting.enemy_health_limit:
+			Globalsetting.enemy_health=Globalsetting.enemy_health_limit
+		$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
+		
 	
 func enemy_take_damage(damage:int):
 	if enemy_is_invulnerable==false:
@@ -299,7 +326,6 @@ func enemy_take_damage(damage:int):
 	$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
 	if Globalsetting.enemy_health<=0:
 		player_win()
-	pass
 
 func player_lost():
 	game_end=true
@@ -338,11 +364,11 @@ func _on_player_ability_pressed():
 	#give_card(\"card15\")
 	player_take_damage(2)
 	$player_ability.disabled=true
-	$player_ability/Sprite2D.texture=load(\"res://gamemap/abilityicon_disabled.png\")
+	$player_ability/Sprite2D.texture=load(\"res://resource/image/mapimage/abilityicon_disabled.png\")
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_dnfcb"]
-font = ExtResource("4_lismf")
+font = ExtResource("10_kn72v")
 font_size = 36
 
 [node name="Gamemap" type="Node"]
@@ -358,7 +384,7 @@ color = Color(0.443137, 0.443137, 0.443137, 1)
 [node name="Sprite2D" type="Sprite2D" parent="background"]
 position = Vector2(792.5, 447)
 scale = Vector2(1.37066, 1.37346)
-texture = ExtResource("1_8ttid")
+texture = ExtResource("1_hbbhf")
 
 [node name="Node" type="Node" parent="background/Sprite2D"]
 
@@ -379,14 +405,14 @@ offset_bottom = -20.0
 [node name="Sprite2D" type="Sprite2D" parent="background/enemycardslot 1/enemybackupcardslot 1"]
 position = Vector2(60.625, 77.5)
 scale = Vector2(0.303709, 0.376214)
-texture = ExtResource("1_16j7t")
+texture = ExtResource("2_y7xhl")
 
 [node name="enemybackupslot1" parent="background/enemycardslot 1/enemybackupcardslot 1" instance=ExtResource("3_xtria")]
 
 [node name="Sprite2D" type="Sprite2D" parent="background/enemycardslot 1"]
 position = Vector2(61, 75)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("2_phmov")
+texture = ExtResource("4_jrgar")
 
 [node name="enemycardslot1" parent="background/enemycardslot 1" instance=ExtResource("4_vja44")]
 
@@ -406,7 +432,7 @@ offset_bottom = -17.0
 [node name="Sprite2D2" type="Sprite2D" parent="background/enemycardslot 2/enemybackupcardslot 2"]
 position = Vector2(60, 74)
 scale = Vector2(0.303709, 0.376214)
-texture = ExtResource("1_16j7t")
+texture = ExtResource("2_y7xhl")
 
 [node name="enemybackupslot2" parent="background/enemycardslot 2/enemybackupcardslot 2" instance=ExtResource("3_xtria")]
 position = Vector2(1, -2)
@@ -414,7 +440,7 @@ position = Vector2(1, -2)
 [node name="Sprite2D2" type="Sprite2D" parent="background/enemycardslot 2"]
 position = Vector2(62, 75)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("2_phmov")
+texture = ExtResource("4_jrgar")
 
 [node name="enemycardslot2" parent="background/enemycardslot 2" instance=ExtResource("4_vja44")]
 position = Vector2(2, 0)
@@ -435,7 +461,7 @@ offset_bottom = -17.0
 [node name="Sprite2D3" type="Sprite2D" parent="background/enemycardslot 3/enemybackupcardslot 3"]
 position = Vector2(60, 72)
 scale = Vector2(0.303709, 0.376214)
-texture = ExtResource("1_16j7t")
+texture = ExtResource("2_y7xhl")
 
 [node name="enemybackupslot3" parent="background/enemycardslot 3/enemybackupcardslot 3" instance=ExtResource("3_xtria")]
 position = Vector2(1, -4)
@@ -443,7 +469,7 @@ position = Vector2(1, -4)
 [node name="Sprite2D3" type="Sprite2D" parent="background/enemycardslot 3"]
 position = Vector2(62, 75)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("2_phmov")
+texture = ExtResource("4_jrgar")
 
 [node name="enemycardslot3" parent="background/enemycardslot 3" instance=ExtResource("4_vja44")]
 
@@ -465,7 +491,7 @@ offset_bottom = -17.0
 [node name="Sprite2D4" type="Sprite2D" parent="background/enemycardslot 4/enemybackupcardslot 4"]
 position = Vector2(61.5368, 76.75)
 scale = Vector2(0.316692, 0.375)
-texture = ExtResource("1_16j7t")
+texture = ExtResource("2_y7xhl")
 
 [node name="enemybackupslot4" parent="background/enemycardslot 4/enemybackupcardslot 4" instance=ExtResource("3_xtria")]
 position = Vector2(0.00366211, 2)
@@ -474,7 +500,7 @@ scale = Vector2(1.00369, 1)
 [node name="Sprite2D4" type="Sprite2D" parent="background/enemycardslot 4"]
 position = Vector2(61.2251, 75)
 scale = Vector2(0.317664, 0.362864)
-texture = ExtResource("2_phmov")
+texture = ExtResource("4_jrgar")
 
 [node name="enemycardslot4" parent="background/enemycardslot 4" instance=ExtResource("4_vja44")]
 position = Vector2(2.00739, 0)
@@ -490,7 +516,7 @@ offset_bottom = 560.0
 [node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 1"]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("2_phmov")
+texture = ExtResource("4_jrgar")
 
 [node name="emptyslot1" parent="background/playcardslot 1" instance=ExtResource("4_t4gll")]
 
@@ -504,7 +530,7 @@ offset_bottom = 560.0
 [node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 2"]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("2_phmov")
+texture = ExtResource("4_jrgar")
 
 [node name="emptyslot2" parent="background/playcardslot 2" instance=ExtResource("4_t4gll")]
 position = Vector2(-2, -2)
@@ -519,7 +545,7 @@ offset_bottom = 560.0
 [node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 3"]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("2_phmov")
+texture = ExtResource("4_jrgar")
 
 [node name="emptyslot3" parent="background/playcardslot 3" instance=ExtResource("4_t4gll")]
 position = Vector2(-2, 0)
@@ -534,7 +560,7 @@ offset_bottom = 560.0
 [node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 4"]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
-texture = ExtResource("2_phmov")
+texture = ExtResource("4_jrgar")
 
 [node name="emptyslot4" parent="background/playcardslot 4" instance=ExtResource("4_t4gll")]
 position = Vector2(-2, 0)
@@ -567,7 +593,7 @@ offset_bottom = 857.0
 
 [node name="Sprite2D" type="Sprite2D" parent="DeckFrame/MarginContainer"]
 position = Vector2(63, 78)
-texture = ExtResource("9_mvfhw")
+texture = ExtResource("9_7gep0")
 
 [node name="decklabel" type="Label" parent="DeckFrame"]
 offset_left = 1218.0
@@ -595,7 +621,7 @@ pivot_offset = Vector2(469, 93)
 modulate = Color(1, 1, 1, 0.533333)
 position = Vector2(416.625, 74.3749)
 scale = Vector2(0.721137, 0.367022)
-texture = ExtResource("5_mhllw")
+texture = ExtResource("11_s874x")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
 custom_minimum_size = Vector2(120, 155)
@@ -622,7 +648,7 @@ scale = Vector2(1.90521, 1.86123)
 
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
 process_mode = 3
-stream = ExtResource("15_iyygu")
+stream = ExtResource("15_kayis")
 volume_db = -18.739
 
 [node name="pause_menu" parent="." instance=ExtResource("16_7miq7")]

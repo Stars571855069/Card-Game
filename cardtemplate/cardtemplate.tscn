@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://bjt1vhndbhcrd"]
 
-[ext_resource type="FontFile" uid="uid://vnepa6rklonj" path="res://fonts/MSYHHV.TTC" id="2_eb4ms"]
-[ext_resource type="FontFile" uid="uid://vmp1130v7i47" path="res://fonts/MSYHBD.TTC" id="2_fy46u"]
+[ext_resource type="FontFile" uid="uid://vnepa6rklonj" path="res://resource/fonts/MSYHHV.TTC" id="1_n51ml"]
+[ext_resource type="FontFile" uid="uid://vmp1130v7i47" path="res://resource/fonts/MSYHBD.TTC" id="2_8tlb0"]
 
 [sub_resource type="GDScript" id="GDScript_l7nym"]
 script/source = "extends Node2D
@@ -209,7 +209,12 @@ func _on_card_drop_in_timer_timeout():
 		cardactivated=true
 		$Card_drop_in_Timer.stop()
 		self.global_position.y=cardtargetY
-	pass # Replace with function body.
+		
+func card_attack_action(target:Node2D):
+	if len(card_ability)>=14 and card_ability[13]==1:
+		var heal=cardattack
+		var rootnode=get_node(\"/root/Gamemap\")
+		rootnode.player_heal(heal,owned_by_player)
 	
 func card_take_damage(dmgamount:int,dmgtype:String):
 	var actual_damage:int
@@ -252,19 +257,19 @@ func _on_cardcontrol_mouse_exited():
 
 [sub_resource type="LabelSettings" id="LabelSettings_1nyig"]
 line_spacing = 2.655
-font = ExtResource("2_eb4ms")
+font = ExtResource("1_n51ml")
 font_size = 24
 font_color = Color(1, 0.258824, 0.321569, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_no5ol"]
 line_spacing = 2.655
-font = ExtResource("2_eb4ms")
+font = ExtResource("1_n51ml")
 font_size = 24
 font_color = Color(0.0784314, 0.698039, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_e8skl"]
 line_spacing = 1.0
-font = ExtResource("2_fy46u")
+font = ExtResource("2_8tlb0")
 font_size = 17
 font_color = Color(0.160784, 0.160784, 0.160784, 1)
 shadow_color = Color(0.364706, 0.364706, 0.364706, 1)
@@ -446,7 +451,7 @@ offset_bottom = 35.0
 theme_override_colors/font_color = Color(0, 0.541176, 0.92549, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/shadow_outline_size = -6
-theme_override_fonts/font = ExtResource("2_eb4ms")
+theme_override_fonts/font = ExtResource("1_n51ml")
 theme_override_font_sizes/font_size = 24
 text = "1"
 horizontal_alignment = 1
@@ -501,7 +506,7 @@ offset_left = 7.0
 offset_top = 81.0
 offset_right = 114.0
 offset_bottom = 120.0
-text = "Aluna"
+text = "1"
 label_settings = SubResource("LabelSettings_e8skl")
 horizontal_alignment = 1
 vertical_alignment = 1

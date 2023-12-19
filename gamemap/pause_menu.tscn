@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://d3ka3r5qm40d1"]
 
 [ext_resource type="Script" path="res://gamemap/pause_menu.gd" id="1_1dq80"]
-[ext_resource type="FontFile" uid="uid://dco3sqfksbb2s" path="res://fonts/STHUPO.TTF" id="2_43rxo"]
+[ext_resource type="FontFile" uid="uid://dco3sqfksbb2s" path="res://resource/fonts/STHUPO.TTF" id="2_43rxo"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_grm35"]
 font = ExtResource("2_43rxo")

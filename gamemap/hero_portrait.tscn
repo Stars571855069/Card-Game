@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dphwwvlmueqmg"]
 
 [ext_resource type="Script" path="res://gamemap/hero_portrait.gd" id="1_107nr"]
-[ext_resource type="Texture2D" uid="uid://b6iqxk5b63cfy" path="res://mapimage/herosprite.jpg" id="1_ncnfe"]
+[ext_resource type="Texture2D" uid="uid://b6iqxk5b63cfy" path="res://resource/image/mapimage/herosprite.jpg" id="1_ncnfe"]
 
 [sub_resource type="Animation" id="Animation_elbn0"]
 resource_name = "get_hurt"
