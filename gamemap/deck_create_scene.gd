@@ -68,7 +68,7 @@ func add_card_to_deck(card:Node2D,cardindex:int):
 	folded_card_frame.custom_minimum_size.x=200
 	folded_card_frame.custom_minimum_size.y=35
 	folded_card_frame.name="container"+card.name
-	var card_added=load("res://gamemap/card_folded_in_deck.tscn").instantiate()
+	var card_added=load("res://cardtemplate/card_folded_in_deck.tscn").instantiate()
 	card_added.card_folded_load(card)
 	
 	Globalsetting.player_global_deck.append(card_add_position[cardindex])

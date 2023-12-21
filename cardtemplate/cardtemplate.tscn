@@ -6,7 +6,7 @@
 [sub_resource type="GDScript" id="GDScript_l7nym"]
 script/source = "extends Node2D
 
-
+var cardid:int
 var cardname:String
 var cardcost:int
 var cardattack:int
@@ -29,6 +29,7 @@ var cardtargetY:int
 signal cardinfochange
 
 func cardload(a):
+	cardid=a.get(\"cardid\")
 	cardname=a.get(\"cardname\")
 	cardcost=a.get(\"cardcost\")
 	cardattack=a.get(\"cardattack\")
@@ -146,8 +147,8 @@ func _physics_process(delta):
 func card_state_refresh():
 	$ColorRect/cardhealthframe/healthlabel.text=String.num_int64(cardhealth)
 	$ColorRect/cardattackframe/attacklabel.text=String.num_int64(cardattack)
-	if cardhealth<=0:
-		card_died()
+	#if cardhealth<=0:
+	#	card_died()
 		
 func animation_attack_up():
 	$card_attack.play(\"attack_up\")
@@ -165,6 +166,10 @@ func card_died():
 		var randomcardID:String=\"card\"+String.num_int64(randi_range(0,len(Globalsetting.cardloadid)))
 		var rootnode=get_node(\"/root/Gamemap\")
 		rootnode.give_card(randomcardID)
+	if len(card_ability)>=5 and card_ability[4]==1 and owned_by_player==true:
+		var selfcardID:String=\"card\"+String.num_int64(cardid)
+		var rootnode2=get_node(\"/root/Gamemap\")
+		rootnode2.give_card(selfcardID)
 	print(self.name+\" died\")
 	$AnimationPlayer.play(\"card_died\")
 	await $AnimationPlayer.animation_finished
@@ -215,6 +220,9 @@ func card_attack_action(target:Node2D):
 		var heal=cardattack
 		var rootnode=get_node(\"/root/Gamemap\")
 		rootnode.player_heal(heal,owned_by_player)
+	if len(card_ability)>=3 and card_ability[2]==1:
+		pass
+	
 	
 func card_take_damage(dmgamount:int,dmgtype:String):
 	var actual_damage:int
@@ -242,11 +250,13 @@ func card_take_damage(dmgamount:int,dmgtype:String):
 
 
 func _on_cardcontrol_mouse_entered():
-	var newpopup=load(\"res://cardtemplate/card_descrption_popup.tscn\").instantiate()
-	$\".\".add_child(newpopup)
-	newpopup.name=\"cardinfo\"
-	newpopup.description_set(cardname,card_ability_sum)
-	newpopup.spawn()
+	var activeted_info=get_node(\"cardinfo\")
+	if activeted_info==null:
+		var newpopup=load(\"res://cardtemplate/card_descrption_popup.tscn\").instantiate()
+		$\".\".add_child(newpopup)
+		newpopup.name=\"cardinfo\"
+		newpopup.description_set(cardname,card_ability_sum)
+		newpopup.spawn()
 
 
 func _on_cardcontrol_mouse_exited():

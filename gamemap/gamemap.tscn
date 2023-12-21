@@ -75,11 +75,19 @@ func _ready():
 	enemycardslot.append($\"background/enemycardslot 2/enemycardslot2\")
 	enemycardslot.append($\"background/enemycardslot 3/enemycardslot3\")
 	enemycardslot.append($\"background/enemycardslot 4/enemycardslot4\")
+	var enemyslotindex=1
+	for enemyslot in enemycardslot:
+		enemyslot.slotindex=enemyslotindex
+		enemyslotindex+=1
 	
 	playercardslot.append($\"background/playcardslot 1/emptyslot1\")
 	playercardslot.append($\"background/playcardslot 2/emptyslot2\")
 	playercardslot.append($\"background/playcardslot 3/emptyslot3\")
 	playercardslot.append($\"background/playcardslot 4/emptyslot4\")
+	var playerslotindex=1
+	for playerslot in playercardslot:
+		playerslot.slotindex=playerslotindex
+		playerslotindex+=1
 	
 	$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
 	$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
@@ -148,6 +156,10 @@ func drawcards(count:int):
 					$DeckFrame/MarginContainer/Sprite2D.texture=load(\"res://resource/image/mapimage/deckhalf.png\")
 			elif ((len(deck)>0)):
 				print(\"hand is full\")
+				var randomcard=randi_range(0,len(deck)-1)
+				#hand.append(deck[randomcard])
+				deck.erase(deck[randomcard])
+				$DeckFrame/decklabel.text=\"剩余卡牌：\"+String.num_int64(len(deck))
 			else:
 				print(\"deck is empty\")
 				player_take_damage(2)
@@ -260,6 +272,7 @@ func enemy_play_card():
 				enemybackupslot[slot_index].remove_child(card_played)
 				enemycardslot[slot_index].add_child(card_played)
 				card_played.position.x=10
+				card_played.cardslot=enemycardslot[slot_index].slotindex
 				enemycardslot[slot_index].slot_is_empty=false
 				enemybackupslot[slot_index].slot_is_empty=true
 				card_played.animation_card_drop_in()
@@ -361,7 +374,7 @@ func _physics_process(delta):
 func _on_player_ability_pressed():
 	print(\"ability triggered\")
 	drawcards(1)
-	#give_card(\"card15\")
+	#give_card(\"card16\")
 	player_take_damage(2)
 	$player_ability.disabled=true
 	$player_ability/Sprite2D.texture=load(\"res://resource/image/mapimage/abilityicon_disabled.png\")

@@ -1,6 +1,7 @@
 extends Node2D
 
 var slot_is_empty=true
+var slotindex:int
 
 
 func _on_button_pressed():
@@ -13,6 +14,7 @@ func _on_button_pressed():
 		#print(self.name)
 		played_card.get_parent().remove_child(played_card)
 		played_card.owned_by_player=true
+		played_card.cardslot=slotindex
 		print(self.name)
 		self.add_child(played_card)
 		Globalsetting.current_mana-=Globalsetting.global_card_current_selected.cardcost
