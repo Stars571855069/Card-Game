@@ -1,3 +1,4 @@
 # Card-Game
-card_game
-My first godot game
+
+
+My first godot game, all built and coded by my self
