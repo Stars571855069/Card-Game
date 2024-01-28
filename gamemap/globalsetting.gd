@@ -88,9 +88,9 @@ var cardtemplate: Dictionary ={
 	"card6": {cardid=6,cardname="骷髅",cardrarity=0,cardcost= 0,cardattack = 1,cardhealth = 1,cardsprite="res://resource/image/cardsprite/cardskeleton.png",cardslot=0,cardability=0},
 	"card7": {cardid=7,cardname="强化陷阱",cardrarity=0,cardcost= 4,cardattack = 3,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardtrap.png",cardslot=0,cardability=0},
 	"card8": {cardid=8,cardname="野人",cardrarity=0,cardcost= 0,cardattack = 1,cardhealth = 1,cardsprite="res://resource/image/cardsprite/cardwildcreature.png",cardslot=0,cardability=0},
-	"card9": {cardid=9,cardname="民兵",cardrarity=0,cardcost= 6,cardattack = 6,cardhealth = 4,cardsprite="res://resource/image/cardsprite/cardmillitia.png",cardslot=0,cardability=0},
+	"card9": {cardid=9,cardname="民兵",cardrarity=0,cardcost= 4,cardattack = 3,cardhealth = 4,cardsprite="res://resource/image/cardsprite/cardmillitia.png",cardslot=0,cardability=0},
 	"card10": {cardid=10,cardname="鱼人",cardrarity=0,cardcost= 1,cardattack = 2,cardhealth = 1,cardsprite="res://resource/image/cardsprite/cardmurloc.png",cardslot=0,cardability=0},
-	"card11": {cardid=11,cardname="猎犬",cardrarity=0,cardcost= 4,cardattack = 3,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardhound.png",cardslot=0,cardability=0},
+	"card11": {cardid=11,cardname="猎犬",cardrarity=0,cardcost= 4,cardattack = 2,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardhound.png",cardslot=0,cardability=8192},
 	"card12": {cardid=12,cardname="狼",cardrarity=0,cardcost= 3,cardattack = 3,cardhealth = 2,cardsprite="res://resource/image/cardsprite/cardwolf.png",cardslot=0,cardability=0},
 	"card13": {cardid=13,cardname="多头蛇",cardrarity=0,cardcost= 6,cardattack = 2,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardhydra.png",cardslot=0,cardability=4},
 	"card14": {cardid=14,cardname="猫头鹰",cardrarity=0,cardcost= 2,cardattack = 2,cardhealth = 4,cardsprite="res://resource/image/cardsprite/cardowl.png",cardslot=0,cardability=0},
@@ -100,13 +100,13 @@ var cardtemplate: Dictionary ={
 	"card18": {cardid=18,cardname="十字军",cardrarity=0,cardcost= 5,cardattack = 4,cardhealth = 2,cardsprite="res://resource/image/cardsprite/cardcrusader.png",cardslot=0,cardability=2},
 	"card19": {cardid=19,cardname="机械陷阱",cardrarity=0,cardcost= 6,cardattack = 2,cardhealth = 5,cardsprite="res://resource/image/cardsprite/cardmechtrap.png",cardslot=0,cardability=32},
 	"card20": {cardid=20,cardname="螳螂",cardrarity=0,cardcost= 2,cardattack = 1,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardmantis.png",cardslot=0,cardability=0},
-	"card21": {cardid=21,cardname="易碎的玻璃雕像",cardrarity=1,cardcost= 2,cardattack = 1,cardhealth = 2,cardsprite="res://resource/image/cardsprite/cardfragilgolem.png",cardslot=0,cardability=512},
+	"card21": {cardid=21,cardname="易碎的雕像",cardrarity=1,cardcost= 2,cardattack = 1,cardhealth = 2,cardsprite="res://resource/image/cardsprite/cardfragilgolem.png",cardslot=0,cardability=512},
 	"card22": {cardid=22,cardname="暴戾的食尸鬼",cardrarity=0,cardcost= 4,cardattack = 1,cardhealth = 5,cardsprite="res://resource/image/cardsprite/cardghoul.png",cardslot=0,cardability=1024},
 	"card23": {cardid=23,cardname="招财猫",cardrarity=0,cardcost= 2,cardattack = 1,cardhealth = 2,cardsprite="res://resource/image/cardsprite/cardmoneycat.png",cardslot=0,cardability=2048},
 	"card24": {cardid=24,cardname="老道的牧师",cardrarity=0,cardcost= 4,cardattack = 1,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardpriest.png",cardslot=0,cardability=4096},
 	"card25": {cardid=25,cardname="吸血鬼",cardrarity=0,cardcost= 6,cardattack = 2,cardhealth = 4,cardsprite="res://resource/image/cardsprite/cardvampire.png",cardslot=0,cardability=8192},
 	"card26": {cardid=26,cardname="坚固的岩石",cardrarity=0,cardcost= 3,cardattack = 1,cardhealth = 8,cardsprite="res://resource/image/cardsprite/cardrock.png",cardslot=0,cardability=16384},
-	"card27": {cardid=27,cardname="长着獠牙的符文石",cardrarity=1,cardcost= 8,cardattack = 2,cardhealth = 7,cardsprite="res://resource/image/cardsprite/cardrunewithspike.png",cardslot=0,cardability=8193}
+	"card27": {cardid=27,cardname="附魔的符文石",cardrarity=1,cardcost= 8,cardattack = 2,cardhealth = 7,cardsprite="res://resource/image/cardsprite/cardrunewithspike.png",cardslot=0,cardability=8193}
 }
 
 

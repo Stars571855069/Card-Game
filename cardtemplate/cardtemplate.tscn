@@ -1,7 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://bjt1vhndbhcrd"]
+[gd_scene load_steps=18 format=3 uid="uid://bjt1vhndbhcrd"]
 
+[ext_resource type="Texture2D" uid="uid://4nyq64ttxe1x" path="res://resource/image/cardtemplate/card_backgound_frame.png" id="1_213qh"]
 [ext_resource type="FontFile" uid="uid://vnepa6rklonj" path="res://resource/fonts/MSYHHV.TTC" id="1_n51ml"]
 [ext_resource type="FontFile" uid="uid://vmp1130v7i47" path="res://resource/fonts/MSYHBD.TTC" id="2_8tlb0"]
+[ext_resource type="Texture2D" uid="uid://cjcq7v1db370n" path="res://resource/image/cardtemplate/card_cost_frame.png" id="2_j8g0a"]
+[ext_resource type="Texture2D" uid="uid://bjt3hx1ewr0ue" path="res://resource/image/cardtemplate/card_attack_frame.png" id="4_jy2rx"]
+[ext_resource type="Texture2D" uid="uid://b6nunt03d2gvg" path="res://resource/image/cardtemplate/card_health_frame.png" id="5_4mi1x"]
 
 [sub_resource type="GDScript" id="GDScript_l7nym"]
 script/source = "extends Node2D
@@ -9,8 +13,11 @@ script/source = "extends Node2D
 var cardid:int
 var cardname:String
 var cardcost:int
+var card_default_cost:int
 var cardattack:int
+var card_default_attack:int
 var cardhealth:int
+var card_default_health:int
 var cardsprite:String
 var cardslot:int
 var cardrarity:int
@@ -22,18 +29,21 @@ var card_ability:Array=[]
 var cardactivated:bool=false
 var owned_by_player:bool=false
 var cardselected:bool=false
-var cardmoving:bool=false
-var cardtargetX:int
-var cardtargetY:int
+#var cardmoving:bool=false
+#var cardtargetX:int
+#var cardtargetY:int
 #export(\"res://gamemap/gamemap.tscn\") var rootnode
-signal cardinfochange
+#signal cardinfochange
 
 func cardload(a):
 	cardid=a.get(\"cardid\")
 	cardname=a.get(\"cardname\")
 	cardcost=a.get(\"cardcost\")
+	card_default_cost=cardcost
 	cardattack=a.get(\"cardattack\")
+	card_default_attack=cardattack
 	cardhealth=a.get(\"cardhealth\")
+	card_default_health=cardhealth
 	cardsprite=a.get(\"cardsprite\")
 	cardslot=a.get(\"cardslot\")
 	cardrarity=a.get(\"cardrarity\")
@@ -145,8 +155,21 @@ func _physics_process(delta):
 
 		
 func card_state_refresh():
+	$ColorRect/cardcostframe/costlabel.text=String.num_int64(cardcost)
+	if cardcost<card_default_cost:
+		$ColorRect/cardcostframe/costlabel.add_theme_color_override(\"font_color\",Color(1,0,0,1))
+	elif cardcost>card_default_cost:
+		$ColorRect/cardcostframe/costlabel.add_theme_color_override(\"font_color\",Color(0,1,0,1))
 	$ColorRect/cardhealthframe/healthlabel.text=String.num_int64(cardhealth)
+	if cardhealth<card_default_health:
+		$ColorRect/cardhealthframe/healthlabel.add_theme_color_override(\"font_color\",Color(1,0,0,1))
+	elif cardhealth>card_default_health:
+		$ColorRect/cardhealthframe/healthlabel.add_theme_color_override(\"font_color\",Color(0,1,0,1))
 	$ColorRect/cardattackframe/attacklabel.text=String.num_int64(cardattack)
+	if cardattack<card_default_attack:
+		$ColorRect/cardattackframe/attacklabel.add_theme_color_override(\"font_color\",Color(1,0,0,1))
+	elif cardattack>card_default_attack:
+		$ColorRect/cardattackframe/attacklabel.add_theme_color_override(\"font_color\",Color(0,1,0,1))
 	#if cardhealth<=0:
 	#	card_died()
 		
@@ -160,6 +183,7 @@ func animation_attack_down():
 		
 func get_hurt():
 	$AnimationPlayer.play(\"card_take_damage\")
+	card_state_refresh()
 		
 func card_died():
 	if len(card_ability)>=4 and card_ability[3]==1 and owned_by_player==true:
@@ -172,16 +196,7 @@ func card_died():
 		rootnode2.give_card(selfcardID)
 	print(self.name+\" died\")
 	$AnimationPlayer.play(\"card_died\")
-	await $AnimationPlayer.animation_finished
-	self.get_parent().slot_is_empty=true
-	self.queue_free()
-	
-	
-func card_slide_in(targetX:int):
-	cardmoving=true
-	$Card_Slide_in_Timer.start()
-	cardtargetX=targetX
-#	cardtargetY=targetY
+	#await $AnimationPlayer.animation_finished
 
 	
 func animation_card_drop_in():
@@ -189,31 +204,7 @@ func animation_card_drop_in():
 
 func card_spawn():
 	$AnimationPlayer.play(\"card_spawn\")
-	
-	
-	
 
-
-func _on_card_slide_in_timer_timeout():
-	if cardmoving:
-		self.global_position.x-=60
-	if abs(self.global_position.x-cardtargetX)<=70 and cardmoving:
-		cardmoving=false
-		cardactivated=true
-		$Card_Slide_in_Timer.stop()
-		self.global_position.x=cardtargetX
-		
-
-
-
-func _on_card_drop_in_timer_timeout():
-	if cardmoving:
-		self.global_position.y-=20
-	if abs(self.global_position.y-cardtargetX)<=30 and cardmoving:
-		cardmoving=false
-		cardactivated=true
-		$Card_drop_in_Timer.stop()
-		self.global_position.y=cardtargetY
 		
 func card_attack_action(target:Node2D):
 	if len(card_ability)>=14 and card_ability[13]==1:
@@ -241,12 +232,18 @@ func card_take_damage(dmgamount:int,dmgtype:String):
 	cardhealth=cardhealth-actual_damage
 	if cardhealth<=0:
 		card_died()
-	pass
-
-
-
-
-
+	elif actual_damage>0:
+		get_hurt()
+	
+	
+func card_attribute_bonus(type:String,amount:int):
+	if type==\"attack\":
+		cardattack+=amount
+	elif type==\"health\":
+		cardhealth+=amount
+	else:
+		print(\"invaild type!\")
+	card_state_refresh()
 
 
 func _on_cardcontrol_mouse_entered():
@@ -263,19 +260,14 @@ func _on_cardcontrol_mouse_exited():
 	var activeted_info=get_node(\"cardinfo\")
 	if activeted_info!=null:
 		activeted_info.queue_free()
+
+
+func _on_animation_player_animation_finished(anim_name):
+	if anim_name==\"card_died\":
+		self.get_parent().slot_is_empty=true
+		self.queue_free()
+	#pass # Replace with function body.
 "
-
-[sub_resource type="LabelSettings" id="LabelSettings_1nyig"]
-line_spacing = 2.655
-font = ExtResource("1_n51ml")
-font_size = 24
-font_color = Color(1, 0.258824, 0.321569, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_no5ol"]
-line_spacing = 2.655
-font = ExtResource("1_n51ml")
-font_size = 24
-font_color = Color(0.0784314, 0.698039, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_e8skl"]
 line_spacing = 1.0
@@ -423,7 +415,13 @@ offset_right = 115.0
 offset_bottom = 147.0
 color = Color(0.831373, 0.835294, 0, 1)
 
+[node name="card_outline_frame" type="Sprite2D" parent="."]
+self_modulate = Color(1, 1, 1, 0.87451)
+position = Vector2(51, 69)
+texture = ExtResource("1_213qh")
+
 [node name="ColorRect" type="ColorRect" parent="."]
+self_modulate = Color(1, 1, 1, 0)
 offset_left = -11.0
 offset_top = -6.0
 offset_right = 109.0
@@ -446,20 +444,19 @@ offset_bottom = 72.0
 [node name="cardsprite" type="Sprite2D" parent="ColorRect/cardimageframe/CenterContainer"]
 position = Vector2(53.2277, 35.875)
 
-[node name="cardcostframe" type="ColorRect" parent="ColorRect"]
-layout_mode = 0
-offset_left = -13.0
-offset_top = -12.0
-offset_right = 20.0
-offset_bottom = 21.0
+[node name="cardcostframe" type="Sprite2D" parent="ColorRect"]
+position = Vector2(4, 5)
+texture = ExtResource("2_j8g0a")
 
 [node name="costlabel" type="Label" parent="ColorRect/cardcostframe"]
-layout_mode = 0
-offset_top = -1.0
-offset_right = 33.0
-offset_bottom = 35.0
-theme_override_colors/font_color = Color(0, 0.541176, 0.92549, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+offset_left = -20.0
+offset_top = -21.0
+offset_right = 13.0
+offset_bottom = 15.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
 theme_override_constants/shadow_outline_size = -6
 theme_override_fonts/font = ExtResource("1_n51ml")
 theme_override_font_sizes/font_size = 24
@@ -467,41 +464,48 @@ text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="cardattackframe" type="ColorRect" parent="ColorRect"]
-layout_mode = 0
-offset_left = -9.0
-offset_top = 123.0
-offset_right = 24.0
-offset_bottom = 156.0
+[node name="cardattackframe" type="Sprite2D" parent="ColorRect"]
+position = Vector2(0, 145)
+texture = ExtResource("4_jy2rx")
 
 [node name="attacklabel" type="Label" parent="ColorRect/cardattackframe"]
-layout_mode = 0
-offset_top = -1.0
-offset_right = 33.0
-offset_bottom = 34.0
+offset_left = -17.0
+offset_top = -18.0
+offset_right = 16.0
+offset_bottom = 18.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_constants/shadow_outline_size = -6
+theme_override_fonts/font = ExtResource("1_n51ml")
+theme_override_font_sizes/font_size = 24
 text = "1"
-label_settings = SubResource("LabelSettings_1nyig")
 horizontal_alignment = 1
 vertical_alignment = 1
-clip_text = true
 
-[node name="cardhealthframe" type="ColorRect" parent="ColorRect"]
-layout_mode = 0
-offset_left = 96.0
-offset_top = 124.0
-offset_right = 129.0
-offset_bottom = 157.0
+[node name="cardhealthframe" type="Sprite2D" parent="ColorRect"]
+position = Vector2(123, 144)
+texture = ExtResource("5_4mi1x")
 
 [node name="healthlabel" type="Label" parent="ColorRect/cardhealthframe"]
-layout_mode = 0
-offset_right = 33.0
-offset_bottom = 33.0
+offset_left = -16.0
+offset_top = -17.0
+offset_right = 17.0
+offset_bottom = 19.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_constants/shadow_outline_size = -6
+theme_override_fonts/font = ExtResource("1_n51ml")
+theme_override_font_sizes/font_size = 24
 text = "1"
-label_settings = SubResource("LabelSettings_no5ol")
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="cardnameframe" type="ColorRect" parent="ColorRect"]
+self_modulate = Color(1, 1, 1, 0.796078)
 layout_mode = 0
 offset_left = 7.0
 offset_top = 81.0
@@ -547,16 +551,16 @@ libraries = {
 }
 
 [node name="sigil_container" type="HBoxContainer" parent="."]
-offset_left = 15.0
+offset_left = 14.0
 offset_top = 117.0
-offset_right = 85.0
+offset_right = 84.0
 offset_bottom = 147.0
 alignment = 1
 
-[connection signal="cardinfochange" from="." to="." method="_on_cardinfochange"]
 [connection signal="button_down" from="cardcontrol" to="." method="_on_cardcontrol_button_down"]
 [connection signal="mouse_entered" from="cardcontrol" to="." method="_on_cardcontrol_mouse_entered"]
 [connection signal="mouse_exited" from="cardcontrol" to="." method="_on_cardcontrol_mouse_exited"]
 [connection signal="pressed" from="cardcontrol" to="." method="_on_cardcontrol_pressed"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
 [connection signal="timeout" from="Card_Slide_in_Timer" to="." method="_on_card_slide_in_timer_timeout"]
 [connection signal="timeout" from="Card_drop_in_Timer" to="." method="_on_card_drop_in_timer_timeout"]

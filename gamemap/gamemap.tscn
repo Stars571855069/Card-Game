@@ -260,6 +260,8 @@ func enemy_play_card_first_time():
 	var random_card_index=randi_range(0,len(cardcollection)-1)
 	enemy_backup_card.cardload(cardcollection[random_card_index])
 	enemy_backup_card.animation_card_drop_in()
+	if (enemy_backup_card.cardattack)<=0:
+		enemy_backup_card.card_attribute_bonus(\"attack\",1)
 	enemybackupslot[slot_index].slot_is_empty=false
 	
 func enemy_play_card():
@@ -306,12 +308,12 @@ func card_combat(player_card:Node2D,enemy_card:Node2D):
 		player_card.card_take_damage(enemy_card.cardattack,\"Poison\")
 	else:
 		player_card.card_take_damage(enemy_card.cardattack,\"Normal\")
-	player_card.get_hurt()
-	enemy_card.get_hurt()
-	$visual_delay_timer.start(0.5)
-	await $visual_delay_timer.timeout
-	player_card.card_state_refresh()
-	enemy_card.card_state_refresh()
+	#player_card.get_hurt()
+	#enemy_card.get_hurt()
+	#$visual_delay_timer.start(0.5)
+	#await $visual_delay_timer.timeout
+	#player_card.card_state_refresh()
+	#enemy_card.card_state_refresh()
 
 func player_take_damage(damage:int):
 	if player_is_invulnerable==false:
