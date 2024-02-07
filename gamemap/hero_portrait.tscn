@@ -1,27 +1,106 @@
-[gd_scene load_steps=5 format=3 uid="uid://dphwwvlmueqmg"]
+[gd_scene load_steps=7 format=3 uid="uid://dphwwvlmueqmg"]
 
 [ext_resource type="Script" path="res://gamemap/hero_portrait.gd" id="1_107nr"]
-[ext_resource type="Texture2D" uid="uid://b6iqxk5b63cfy" path="res://resource/image/mapimage/herosprite.jpg" id="1_ncnfe"]
+[ext_resource type="FontFile" uid="uid://sshyf2b4qqgp" path="res://resource/fonts/MSYHSB.TTC" id="3_oevfg"]
 
 [sub_resource type="Animation" id="Animation_elbn0"]
 resource_name = "get_hurt"
-length = 0.5
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
+tracks/0/path = NodePath("dmglabel:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.5),
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(15, -32), Vector2(15, -64)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("dmglabel:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("PanelContainer:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Color(1, 1, 1, 1), Color(0.768627, 0.027451, 0, 1), Color(1, 1, 1, 1)]
+"values": [Color(1, 1, 1, 1), Color(0.870588, 0, 0, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_6uoht"]
+resource_name = "idle"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("dmglabel:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_wn23j"]
+resource_name = "get_hurt"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PanelContainer:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0, 0.870588, 0.317647, 1), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("heallabel:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("heallabel:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(15, -32), Vector2(15, -64)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_jgni5"]
 _data = {
-"get_hurt": SubResource("Animation_elbn0")
+"get_heal": SubResource("Animation_wn23j"),
+"get_hurt": SubResource("Animation_elbn0"),
+"idle": SubResource("Animation_6uoht")
 }
 
 [node name="hero_portrait" type="Node2D"]
@@ -34,9 +113,36 @@ offset_bottom = 126.0
 [node name="Sprite2D" type="Sprite2D" parent="PanelContainer"]
 position = Vector2(73, 64)
 scale = Vector2(0.290456, 0.279279)
-texture = ExtResource("1_ncnfe")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_jgni5")
 }
+
+[node name="dmglabel" type="Label" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 15.0
+offset_top = -64.0
+offset_right = 119.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_oevfg")
+theme_override_font_sizes/font_size = 76
+text = "-12"
+
+[node name="heallabel" type="Label" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+offset_left = 15.0
+offset_top = -64.0
+offset_right = 141.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(0, 1, 0.14902, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_oevfg")
+theme_override_font_sizes/font_size = 76
+text = "+12"

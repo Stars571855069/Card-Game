@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://dt3k282fhs172"]
+[gd_scene load_steps=19 format=3 uid="uid://dt3k282fhs172"]
 
 [ext_resource type="Texture2D" uid="uid://difmpm1ae5g44" path="res://resource/image/mapimage/battlefield.png" id="1_hbbhf"]
 [ext_resource type="Texture2D" uid="uid://bifu14xa2eb5r" path="res://resource/image/mapimage/backupslot.png" id="2_y7xhl"]
@@ -14,7 +14,6 @@
 [ext_resource type="Texture2D" uid="uid://dk8l33r58i5yf" path="res://resource/image/mapimage/handframe.png" id="11_s874x"]
 [ext_resource type="PackedScene" uid="uid://eh7jxly0yw6e" path="res://gamemap/player_ability.tscn" id="13_18fj7"]
 [ext_resource type="PackedScene" uid="uid://dphwwvlmueqmg" path="res://gamemap/hero_portrait.tscn" id="13_hxdxn"]
-[ext_resource type="PackedScene" uid="uid://rjlvmlresg08" path="res://gamemap/enemy_portrait.tscn" id="14_wqfm6"]
 [ext_resource type="AudioStream" uid="uid://bdivl06tl1q5o" path="res://resource/Sound/Jonah Senzel - Botopia.mp3" id="15_kayis"]
 [ext_resource type="PackedScene" uid="uid://d3ka3r5qm40d1" path="res://gamemap/pause_menu.tscn" id="16_7miq7"]
 
@@ -162,7 +161,7 @@ func drawcards(count:int):
 				$DeckFrame/decklabel.text=\"剩余卡牌：\"+String.num_int64(len(deck))
 			else:
 				print(\"deck is empty\")
-				player_take_damage(2)
+				player_take_damage(1,2)
 			drawindex+=1
 	else:
 		print(\"invalid draw count\")
@@ -234,14 +233,15 @@ func start_combat():
 			var enemy_card=enemycardslot[slot_index].get_child(1)
 			enemy_card.animation_attack_down()
 			enemy_card.card_attack_action(null)
-			player_take_damage(enemy_card.cardattack)
-			$Player_Portrait.get_hurt()
+			player_take_damage(1,enemy_card.cardattack)
+			#$Player_Portrait.get_hurt()
 		elif enemycardslot[slot_index].slot_is_empty==true and playercardslot[slot_index].slot_is_empty==false:
 			var player_card=playercardslot[slot_index].get_child(1)
 			player_card.animation_attack_up()
 			player_card.card_attack_action(null)
-			enemy_take_damage(player_card.cardattack)
-			$enemy_portrait.get_hurt()
+			player_take_damage(0,player_card.cardattack)
+			#enemy_take_damage(player_card.cardattack)
+			#$enemy_portrait.get_hurt()
 		slot_index+=1
 	$TurnTimer.start(2)
 
@@ -293,7 +293,6 @@ func enemy_play_card():
 
 
 func card_combat(player_card:Node2D,enemy_card:Node2D):
-	#var visual_delay=get_tree().create_timer
 	player_card.animation_attack_up()
 	player_card.card_attack_action(enemy_card)
 	enemy_card.card_attack_action(player_card)
@@ -308,39 +307,44 @@ func card_combat(player_card:Node2D,enemy_card:Node2D):
 		player_card.card_take_damage(enemy_card.cardattack,\"Poison\")
 	else:
 		player_card.card_take_damage(enemy_card.cardattack,\"Normal\")
-	#player_card.get_hurt()
-	#enemy_card.get_hurt()
-	#$visual_delay_timer.start(0.5)
-	#await $visual_delay_timer.timeout
-	#player_card.card_state_refresh()
-	#enemy_card.card_state_refresh()
 
-func player_take_damage(damage:int):
-	if player_is_invulnerable==false:
-		Globalsetting.player_health-=damage
-	$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
-	if Globalsetting.player_health<=0:
-		player_lost()
+
+func player_take_damage(target:int,damage:int):
+	if target==1:
+		if player_is_invulnerable==false:
+			Globalsetting.player_health-=damage
+			$Player_Portrait.get_hurt(damage)
+		$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
+		if Globalsetting.player_health<=0:
+			player_lost()
+	elif target==0:
+		if enemy_is_invulnerable==false:
+			Globalsetting.enemy_health-=damage
+			$Enemy_Portrait.get_hurt(damage)
+			$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
+		if Globalsetting.enemy_health<=0:
+			player_win()
+	else:
+		print(\"invaild target!\")
+		
+	
 		
 func player_heal(amount:int,targetplayer:int):
 	if targetplayer==1:
 		Globalsetting.player_health+=amount
+		$Player_Portrait.get_heal(amount)
 		if Globalsetting.player_health>Globalsetting.player_health_limit:
 			Globalsetting.player_health=Globalsetting.player_health_limit
 		$background/PlayerHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.player_health)
 	else:
 		Globalsetting.enemy_health+=amount
+		$Enemy_Portrait.get_heal(amount)
 		if Globalsetting.enemy_health>Globalsetting.enemy_health_limit:
 			Globalsetting.enemy_health=Globalsetting.enemy_health_limit
 		$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
 		
 	
-func enemy_take_damage(damage:int):
-	if enemy_is_invulnerable==false:
-		Globalsetting.enemy_health-=damage
-	$background/EnemyHealthFrame/PanelContainer/Label.text=\"生命值：\"+String.num_int64(Globalsetting.enemy_health)
-	if Globalsetting.enemy_health<=0:
-		player_win()
+
 
 func player_lost():
 	game_end=true
@@ -377,7 +381,7 @@ func _on_player_ability_pressed():
 	print(\"ability triggered\")
 	drawcards(1)
 	#give_card(\"card16\")
-	player_take_damage(2)
+	player_take_damage(1,2)
 	$player_ability.disabled=true
 	$player_ability/Sprite2D.texture=load(\"res://resource/image/mapimage/abilityicon_disabled.png\")
 "
@@ -584,10 +588,10 @@ position = Vector2(-2, 0)
 position = Vector2(292, 617)
 
 [node name="EnemyHealthFrame" parent="background" instance=ExtResource("8_rmj8r")]
-position = Vector2(34, 207)
+position = Vector2(34, 275)
 
 [node name="PlayerHealthFrame" parent="background" instance=ExtResource("8_rmj8r")]
-position = Vector2(34, 344)
+position = Vector2(30, 410)
 
 [node name="endturn" type="Button" parent="."]
 offset_left = 743.0
@@ -642,7 +646,6 @@ texture = ExtResource("11_s874x")
 custom_minimum_size = Vector2(120, 155)
 layout_mode = 2
 theme_override_constants/separation = 25
-alignment = 1
 
 [node name="player_ability" parent="." instance=ExtResource("13_18fj7")]
 offset_left = 1033.0
@@ -654,12 +657,14 @@ tooltip_text = "受到2点伤害,抽一张牌"
 mouse_default_cursor_shape = 2
 
 [node name="Player_Portrait" parent="." instance=ExtResource("13_hxdxn")]
-position = Vector2(58, 419)
+position = Vector2(58, 499)
 scale = Vector2(1.4727, 1.4727)
+portrait_route = "res://resource/image/mapimage/herosprite.jpg"
 
-[node name="enemy_portrait" parent="." instance=ExtResource("14_wqfm6")]
-position = Vector2(56, 11)
-scale = Vector2(1.90521, 1.86123)
+[node name="Enemy_Portrait" parent="." instance=ExtResource("13_hxdxn")]
+position = Vector2(54, 77)
+scale = Vector2(1.4727, 1.4727)
+portrait_route = "res://resource/image/mapimage/enemysprite.jpg"
 
 [node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
 process_mode = 3
