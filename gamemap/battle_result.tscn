@@ -1,7 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://b30051q8urhy3"]
+[gd_scene format=3 uid="uid://b30051q8urhy3"]
 
 [ext_resource type="FontFile" uid="uid://dco3sqfksbb2s" path="res://resource/fonts/STHUPO.TTF" id="1_bh3tk"]
-[ext_resource type="Script" path="res://gamemap/battle_result.gd" id="1_ywcyb"]
+[ext_resource type="Script" uid="uid://g0qwypnqif0h" path="res://gamemap/battle_result.gd" id="1_ywcyb"]
 [ext_resource type="FontFile" uid="uid://vmp1130v7i47" path="res://resource/fonts/MSYHBD.TTC" id="2_xr7yp"]
 [ext_resource type="FontFile" uid="uid://bnwvmpnygcfyy" path="res://resource/fonts/MSYH.TTC" id="3_024wi"]
 
@@ -17,20 +17,20 @@ font_size = 36
 font = ExtResource("3_024wi")
 font_size = 31
 
-[node name="battle_result" type="Node2D"]
+[node name="battle_result" type="Node2D" unique_id=1393488023]
 script = ExtResource("1_ywcyb")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=147226593]
 self_modulate = Color(0.196078, 0.196078, 0.196078, 1)
 offset_right = 1600.0
 offset_bottom = 900.0
 
-[node name="Button" type="Button" parent="PanelContainer"]
+[node name="Button" type="Button" parent="PanelContainer" unique_id=466549684]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 button_mask = 0
 
-[node name="resultLabel" type="Label" parent="."]
+[node name="resultLabel" type="Label" parent="." unique_id=1441573566]
 offset_left = 568.0
 offset_top = 219.0
 offset_right = 952.0
@@ -40,7 +40,7 @@ label_settings = SubResource("LabelSettings_7vaom")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="resultinfo" type="Label" parent="."]
+[node name="resultinfo" type="Label" parent="." unique_id=1585455804]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -57,7 +57,7 @@ label_settings = SubResource("LabelSettings_x1o2j")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="enemyhealthlabel" type="Label" parent="."]
+[node name="enemyhealthlabel" type="Label" parent="." unique_id=1204483664]
 offset_left = 581.0
 offset_top = 416.0
 offset_right = 929.0
@@ -65,7 +65,7 @@ offset_bottom = 478.0
 text = "敌人剩余的生命值："
 label_settings = SubResource("LabelSettings_gqequ")
 
-[node name="turnlabel" type="Label" parent="."]
+[node name="turnlabel" type="Label" parent="." unique_id=890249087]
 offset_left = 578.0
 offset_top = 473.0
 offset_right = 926.0
@@ -73,14 +73,14 @@ offset_bottom = 535.0
 text = "已进行的回合轮数："
 label_settings = SubResource("LabelSettings_gqequ")
 
-[node name="RestartButton" type="Button" parent="."]
+[node name="RestartButton" type="Button" parent="." unique_id=1616298813]
 offset_left = 631.0
 offset_top = 550.0
 offset_right = 899.0
 offset_bottom = 628.0
 text = "重新开始"
 
-[node name="QuitButton" type="Button" parent="."]
+[node name="QuitButton" type="Button" parent="." unique_id=1648543099]
 offset_left = 637.0
 offset_top = 664.0
 offset_right = 905.0

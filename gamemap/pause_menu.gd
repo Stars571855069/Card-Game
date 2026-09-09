@@ -7,7 +7,7 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta):
+func _physics_process(_delta):
 	pass
 	#var paused=Input.is_action_pressed("Esc")
 	#if paused and get_tree().paused == true:
@@ -16,13 +16,11 @@ func _physics_process(delta):
 	#	self.visible=false
 
 
-func _on_quit_button_pressed():
+func _on_quit_button_pressed() -> void:
 	get_tree().quit()
 
 
-func _on_resume_button_pressed():
+func _on_resume_button_pressed() -> void:
 	print("Resumed")
 	self.visible=false
 	get_tree().paused = false
-	
-	#pass # Replace with function body.

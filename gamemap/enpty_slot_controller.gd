@@ -4,7 +4,7 @@ var slot_is_empty=true
 var slotindex:int
 
 
-func _on_button_pressed():
+func _on_button_pressed() -> void:
 	if (Globalsetting.global_card_current_selected!= null) and slot_is_empty and Globalsetting.current_mana>=Globalsetting.global_card_current_selected.cardcost and Globalsetting.player_turn==true:
 		var played_card=Globalsetting.global_card_current_selected
 		played_card.deactivatedcard()
@@ -22,5 +22,3 @@ func _on_button_pressed():
 		played_card.position.y=5
 		Globalsetting.global_card_current_selected = null
 		slot_is_empty=false
-		
-		

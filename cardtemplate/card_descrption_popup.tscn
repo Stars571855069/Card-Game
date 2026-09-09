@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://ctvxh6e7en27r"]
+[gd_scene format=3 uid="uid://ctvxh6e7en27r"]
 
-[ext_resource type="Script" path="res://cardtemplate/Card_descrption_popup.gd" id="1_i6xgx"]
+[ext_resource type="Script" uid="uid://dal4yvfo7oefd" path="res://cardtemplate/Card_descrption_popup.gd" id="1_i6xgx"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_j4ago"]
 shadow_size = 7
@@ -50,24 +50,24 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_81ysc"]
 _data = {
-"close": SubResource("Animation_0ok3g"),
-"idle": SubResource("Animation_5d0p6"),
-"spawn": SubResource("Animation_xm8v4")
+&"close": SubResource("Animation_0ok3g"),
+&"idle": SubResource("Animation_5d0p6"),
+&"spawn": SubResource("Animation_xm8v4")
 }
 
-[node name="Card_descrption_popup" type="Node2D"]
+[node name="Card_descrption_popup" type="Node2D" unique_id=862061411]
 visibility_layer = 512
 z_index = 10
 position = Vector2(130, -150)
 script = ExtResource("1_i6xgx")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=135970839]
 self_modulate = Color(0.396078, 0.396078, 0.396078, 0.85098)
-offset_right = 240.0
+offset_right = 241.0
 offset_bottom = 300.0
 pivot_offset = Vector2(0, 150)
 
-[node name="line" type="Label" parent="ColorRect"]
+[node name="line" type="Label" parent="ColorRect" unique_id=1435246110]
 layout_mode = 0
 offset_top = 29.0
 offset_right = 240.0
@@ -77,7 +77,7 @@ theme_override_font_sizes/font_size = 16
 text = "———————————————"
 label_settings = SubResource("LabelSettings_j4ago")
 
-[node name="cardname" type="Label" parent="ColorRect"]
+[node name="cardname" type="Label" parent="ColorRect" unique_id=575889700]
 layout_mode = 0
 offset_right = 238.0
 offset_bottom = 40.0
@@ -86,7 +86,7 @@ label_settings = SubResource("LabelSettings_eo600")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RichTextLabel" type="RichTextLabel" parent="ColorRect"]
+[node name="RichTextLabel" type="RichTextLabel" parent="ColorRect" unique_id=714009252]
 layout_mode = 0
 offset_left = 9.0
 offset_top = 53.0
@@ -95,7 +95,5 @@ offset_bottom = 293.0
 bbcode_enabled = true
 fit_content = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_81ysc")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=753851794]
+libraries/ = SubResource("AnimationLibrary_81ysc")

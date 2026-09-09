@@ -1,17 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://bdutau7fea8r0"]
+[gd_scene format=3 uid="uid://bdutau7fea8r0"]
 
-[ext_resource type="Script" path="res://gamemap/enpty_slot_controller.gd" id="1_wdqld"]
+[ext_resource type="Script" uid="uid://c210fbjl04n6s" path="res://gamemap/enpty_slot_controller.gd" id="1_wdqld"]
 
-[node name="enpty_slot_controller" type="Node2D"]
+[node name="enpty_slot_controller" type="Node2D" unique_id=100137078]
 script = ExtResource("1_wdqld")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1368058082]
 self_modulate = Color(1, 1, 1, 0)
 offset_right = 120.0
 offset_bottom = 150.0
 size_flags_stretch_ratio = 0.0
 
-[node name="Button" type="Button" parent="PanelContainer"]
+[node name="Button" type="Button" parent="PanelContainer" unique_id=734175568]
 self_modulate = Color(1, 1, 1, 0.862745)
 layout_mode = 2
 flat = true

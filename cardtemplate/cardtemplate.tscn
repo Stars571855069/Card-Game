@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bjt1vhndbhcrd"]
+[gd_scene format=3 uid="uid://bjt1vhndbhcrd"]
 
 [ext_resource type="Texture2D" uid="uid://4nyq64ttxe1x" path="res://resource/image/cardtemplate/card_backgound_frame.png" id="1_213qh"]
 [ext_resource type="FontFile" uid="uid://vnepa6rklonj" path="res://resource/fonts/MSYHHV.TTC" id="1_n51ml"]
@@ -122,7 +122,7 @@ func deactivatedcard():
 	print(name+\" is deactivated successfully\")
 
 
-func _on_cardcontrol_pressed():
+func _on_cardcontrol_pressed() -> void:
 	if cardactivated and is_right_click==0:
 		cardselected=true
 		$cardoutline.visible=true
@@ -141,7 +141,7 @@ func _on_cardcontrol_button_down():
 		is_right_click=0
 
 	
-func _physics_process(delta):
+func _physics_process(_delta):
 	var rightclickpress=Input.is_action_pressed(\"鼠标右键\")
 	if cardselected and rightclickpress:
 		cardselected=false
@@ -201,11 +201,15 @@ func card_died(type:String):
 		var selfcardID:String=\"card\"+String.num_int64(cardid)
 		var rootnode2=get_node(\"/root/Gamemap\")
 		rootnode2.give_card(selfcardID)
+	if len(card_ability)>=11 and card_ability[10]==1 and owned_by_player==true:
+		#var selfcardID:String=\"card\"+String.num_int64(cardid)
+		var rootnode3=get_node(\"/root/Gamemap\")
+		rootnode3.drawcards(1)
 	print(self.name+\" died\")
 	if type==\"poison\":
-		$AnimationPlayer.play(\"card_died\")
-	else:
 		$AnimationPlayer.play(\"card_died_poison\")
+	else:
+		$AnimationPlayer.play(\"card_died\")
 	#await $AnimationPlayer.animation_finished
 
 	
@@ -216,23 +220,31 @@ func card_spawn():
 	$AnimationPlayer.play(\"card_spawn\")
 
 		
-func card_attack_action(target:Node2D):
+func card_attack_action(_target:Node2D):
 	if len(card_ability)>=14 and card_ability[13]==1:
 		var heal=cardattack
 		var rootnode=get_node(\"/root/Gamemap\")
 		rootnode.player_heal(heal,owned_by_player)
+	if len(card_ability)>=10 and card_ability[9]==1:
+		card_died(\"null\")
 	if len(card_ability)>=3 and card_ability[2]==1:
 		pass
 	
 	
-func card_take_damage(dmgamount:int,dmgtype:String):
+func card_take_damage(source:Node2D,dmgamount:int,dmgtype:String):
 	var actual_damage:int
 	if dmgtype==\"Poison\":
-		actual_damage=9999
+		if len(card_ability)>=15 and card_ability[14]==1:
+			actual_damage=dmgamount
+		else:
+			actual_damage=9999
 	else:
 		actual_damage=dmgamount
 	#divine shield[ability(1)]
-	if len(card_ability)>=2 and card_ability[1]==1:
+	if len(card_ability)>=9 and card_ability[8]==1 and source.cardattack<cardattack:
+		actual_damage=0
+		$AnimationPlayer.play(\"card_damage_block\")
+	if actual_damage>0 and len(card_ability)>=2 and card_ability[1]==1:
 		actual_damage=0
 		$AnimationPlayer.play(\"card_damage_block\")
 		card_ability_sum=card_ability_sum-2
@@ -242,8 +254,14 @@ func card_take_damage(dmgamount:int,dmgtype:String):
 	cardhealth=cardhealth-actual_damage
 	if cardhealth<=0 and dmgtype==\"Poison\":
 		card_died(\"poison\")
+		if len(source.card_ability)>=11 and source.card_ability[10]==1 and source.cardhealth>0:
+			source.cardattack+=1
+			source.card_state_refresh()
 	elif cardhealth<=0 and dmgtype!=\"Poison\":
 		card_died(\"null\")
+		if len(source.card_ability)>=11 and source.card_ability[10]==1  and source.cardhealth>0:
+			source.cardattack+=1
+			source.card_state_refresh()
 	elif actual_damage>0:
 		get_hurt(actual_damage)
 	
@@ -259,8 +277,7 @@ func card_attribute_bonus(type:String,amount:int):
 
 
 func _on_cardcontrol_mouse_entered():
-	var activeted_info=get_node(\"cardinfo\")
-	if activeted_info==null:
+	if (get_node(\"cardinfo\"))==null:
 		var newpopup=load(\"res://cardtemplate/card_descrption_popup.tscn\").instantiate()
 		$\".\".add_child(newpopup)
 		newpopup.name=\"cardinfo\"
@@ -288,6 +305,20 @@ font_size = 17
 font_color = Color(0.160784, 0.160784, 0.160784, 1)
 shadow_color = Color(0.364706, 0.364706, 0.364706, 1)
 shadow_offset = Vector2(1.8, 1.35)
+
+[sub_resource type="Animation" id="Animation_rtwii"]
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.6, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 0.298039, 1), Color(1, 0.988235, 0.972549, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_pjc0s"]
 resource_name = "card_died"
@@ -317,6 +348,34 @@ tracks/1/keys = {
 "values": [Color(1, 1, 1, 1), Color(0.196078, 0.00392157, 0.0784314, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_0qo70"]
+resource_name = "card_died"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.0509804, 0.454902, 0, 1)]
+}
+
 [sub_resource type="Animation" id="Animation_wpycs"]
 resource_name = "card_drop_in"
 length = 0.4
@@ -331,6 +390,46 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(11, -164), Vector2(11, 6)]
+}
+
+[sub_resource type="Animation" id="Animation_76xm5"]
+resource_name = "card_take_damage"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.45098, 1, 0.678431, 1), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("healLabel:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("healLabel:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(17, -13), Vector2(17, -55)]
 }
 
 [sub_resource type="Animation" id="Animation_ymuni"]
@@ -416,98 +515,16 @@ tracks/2/keys = {
 "values": [Vector2(17, -13), Vector2(17, -55)]
 }
 
-[sub_resource type="Animation" id="Animation_0qo70"]
-resource_name = "card_died"
-length = 0.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(0.0509804, 0.454902, 0, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_rtwii"]
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.6, 1),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 0.298039, 1), Color(1, 0.988235, 0.972549, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_76xm5"]
-resource_name = "card_take_damage"
-length = 0.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(0.45098, 1, 0.678431, 1), Color(1, 1, 1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("healLabel:self_modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("healLabel:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(17, -13), Vector2(17, -55)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_cdufv"]
 _data = {
-"card_damage_block": SubResource("Animation_rtwii"),
-"card_died": SubResource("Animation_pjc0s"),
-"card_died_poison": SubResource("Animation_0qo70"),
-"card_drop_in": SubResource("Animation_wpycs"),
-"card_heal": SubResource("Animation_76xm5"),
-"card_idle": SubResource("Animation_ymuni"),
-"card_spawn": SubResource("Animation_ve6k7"),
-"card_take_damage": SubResource("Animation_m4qme")
+&"card_damage_block": SubResource("Animation_rtwii"),
+&"card_died": SubResource("Animation_pjc0s"),
+&"card_died_poison": SubResource("Animation_0qo70"),
+&"card_drop_in": SubResource("Animation_wpycs"),
+&"card_heal": SubResource("Animation_76xm5"),
+&"card_idle": SubResource("Animation_ymuni"),
+&"card_spawn": SubResource("Animation_ve6k7"),
+&"card_take_damage": SubResource("Animation_m4qme")
 }
 
 [sub_resource type="Animation" id="Animation_ar4tt"]
@@ -544,28 +561,28 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ijigf"]
 _data = {
-"attack_down": SubResource("Animation_ar4tt"),
-"attack_up": SubResource("Animation_htrmf")
+&"attack_down": SubResource("Animation_ar4tt"),
+&"attack_up": SubResource("Animation_htrmf")
 }
 
-[node name="cardtemplate" type="Node2D"]
+[node name="cardtemplate" type="Node2D" unique_id=818461680]
 position = Vector2(11, 6)
 script = SubResource("GDScript_l7nym")
 metadata/_edit_vertical_guides_ = [7.0, 115.0]
 
-[node name="cardoutline" type="ColorRect" parent="."]
+[node name="cardoutline" type="ColorRect" parent="." unique_id=2140344630]
 offset_left = -15.0
 offset_top = -10.0
 offset_right = 115.0
 offset_bottom = 147.0
 color = Color(0.831373, 0.835294, 0, 1)
 
-[node name="card_outline_frame" type="Sprite2D" parent="."]
+[node name="card_outline_frame" type="Sprite2D" parent="." unique_id=1429150370]
 self_modulate = Color(1, 1, 1, 0.87451)
 position = Vector2(51, 69)
 texture = ExtResource("1_213qh")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2132156548]
 self_modulate = Color(1, 1, 1, 0)
 offset_left = -11.0
 offset_top = -6.0
@@ -573,7 +590,7 @@ offset_right = 109.0
 offset_bottom = 144.0
 pivot_offset = Vector2(60, 75)
 
-[node name="cardimageframe" type="ColorRect" parent="ColorRect"]
+[node name="cardimageframe" type="ColorRect" parent="ColorRect" unique_id=1069845315]
 layout_mode = 0
 offset_left = 7.0
 offset_top = 6.0
@@ -581,19 +598,19 @@ offset_right = 114.0
 offset_bottom = 77.0
 color = Color(0.611765, 0.611765, 0.611765, 1)
 
-[node name="CenterContainer" type="CenterContainer" parent="ColorRect/cardimageframe"]
+[node name="CenterContainer" type="CenterContainer" parent="ColorRect/cardimageframe" unique_id=1785714596]
 layout_mode = 0
 offset_right = 108.0
 offset_bottom = 72.0
 
-[node name="cardsprite" type="Sprite2D" parent="ColorRect/cardimageframe/CenterContainer"]
+[node name="cardsprite" type="Sprite2D" parent="ColorRect/cardimageframe/CenterContainer" unique_id=1225122640]
 position = Vector2(53.2277, 35.875)
 
-[node name="cardcostframe" type="Sprite2D" parent="ColorRect"]
+[node name="cardcostframe" type="Sprite2D" parent="ColorRect" unique_id=1400030273]
 position = Vector2(4, 5)
 texture = ExtResource("2_j8g0a")
 
-[node name="costlabel" type="Label" parent="ColorRect/cardcostframe"]
+[node name="costlabel" type="Label" parent="ColorRect/cardcostframe" unique_id=191786365]
 offset_left = -20.0
 offset_top = -21.0
 offset_right = 13.0
@@ -609,11 +626,11 @@ text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="cardattackframe" type="Sprite2D" parent="ColorRect"]
+[node name="cardattackframe" type="Sprite2D" parent="ColorRect" unique_id=1829243181]
 position = Vector2(0, 145)
 texture = ExtResource("4_jy2rx")
 
-[node name="attacklabel" type="Label" parent="ColorRect/cardattackframe"]
+[node name="attacklabel" type="Label" parent="ColorRect/cardattackframe" unique_id=1080102479]
 offset_left = -17.0
 offset_top = -18.0
 offset_right = 16.0
@@ -629,11 +646,11 @@ text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="cardhealthframe" type="Sprite2D" parent="ColorRect"]
+[node name="cardhealthframe" type="Sprite2D" parent="ColorRect" unique_id=1384940715]
 position = Vector2(123, 144)
 texture = ExtResource("5_4mi1x")
 
-[node name="healthlabel" type="Label" parent="ColorRect/cardhealthframe"]
+[node name="healthlabel" type="Label" parent="ColorRect/cardhealthframe" unique_id=1566277555]
 offset_left = -16.0
 offset_top = -17.0
 offset_right = 17.0
@@ -649,7 +666,7 @@ text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="cardnameframe" type="ColorRect" parent="ColorRect"]
+[node name="cardnameframe" type="ColorRect" parent="ColorRect" unique_id=1459214651]
 self_modulate = Color(1, 1, 1, 0.796078)
 layout_mode = 0
 offset_left = 7.0
@@ -659,8 +676,8 @@ offset_bottom = 178.0
 scale = Vector2(2.66943, 0.411679)
 color = Color(0.941176, 0.72549, 0.372549, 1)
 
-[node name="namelabel" type="Label" parent="ColorRect"]
-layout_mode = 2
+[node name="namelabel" type="Label" parent="ColorRect" unique_id=379257195]
+layout_mode = 0
 offset_left = 7.0
 offset_top = 81.0
 offset_right = 114.0
@@ -671,7 +688,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 
-[node name="cardcontrol" type="Button" parent="."]
+[node name="cardcontrol" type="Button" parent="." unique_id=840485696]
 offset_left = -11.0
 offset_top = -8.0
 offset_right = 110.0
@@ -679,30 +696,26 @@ offset_bottom = 144.0
 button_mask = 3
 flat = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_cdufv")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1055078815]
+libraries/ = SubResource("AnimationLibrary_cdufv")
 
-[node name="Card_Slide_in_Timer" type="Timer" parent="."]
+[node name="Card_Slide_in_Timer" type="Timer" parent="." unique_id=783733455]
 wait_time = 0.05
 
-[node name="Card_drop_in_Timer" type="Timer" parent="."]
+[node name="Card_drop_in_Timer" type="Timer" parent="." unique_id=810115195]
 wait_time = 0.05
 
-[node name="card_attack" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_ijigf")
-}
+[node name="card_attack" type="AnimationPlayer" parent="." unique_id=849147982]
+libraries/ = SubResource("AnimationLibrary_ijigf")
 
-[node name="sigil_container" type="HBoxContainer" parent="."]
-offset_left = 14.0
-offset_top = 117.0
-offset_right = 84.0
+[node name="sigil_container" type="HBoxContainer" parent="." unique_id=2041630099]
+offset_left = 4.0
+offset_top = 115.0
+offset_right = 101.0
 offset_bottom = 147.0
 alignment = 1
 
-[node name="dmgLabel" type="Label" parent="."]
+[node name="dmgLabel" type="Label" parent="." unique_id=578524902]
 self_modulate = Color(1, 1, 1, 0)
 offset_left = 17.0
 offset_top = -13.0
@@ -718,7 +731,7 @@ text = "-2"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="healLabel" type="Label" parent="."]
+[node name="healLabel" type="Label" parent="." unique_id=2076512065]
 self_modulate = Color(1, 1, 1, 0)
 offset_left = 17.0
 offset_top = -13.0

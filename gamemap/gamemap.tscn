@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dt3k282fhs172"]
+[gd_scene format=3 uid="uid://dt3k282fhs172"]
 
 [ext_resource type="Texture2D" uid="uid://difmpm1ae5g44" path="res://resource/image/mapimage/battlefield.png" id="1_hbbhf"]
 [ext_resource type="Texture2D" uid="uid://bifu14xa2eb5r" path="res://resource/image/mapimage/backupslot.png" id="2_y7xhl"]
@@ -105,7 +105,7 @@ func _ready():
 	
 	
 
-func _on_startcombat_pressed():
+func _on_startcombat_pressed() -> void:
 	player_turn_end()
 	$endturn.disabled=true
 	$endturn.text=\"敌方回合\"
@@ -229,21 +229,26 @@ func start_combat():
 			var player_card=playercardslot[slot_index].get_child(1)
 			var enemy_card=enemycardslot[slot_index].get_child(1)
 			card_combat(player_card,enemy_card)
+			await get_tree().create_timer(1.3).timeout
 		elif enemycardslot[slot_index].slot_is_empty==false and playercardslot[slot_index].slot_is_empty==true:
 			var enemy_card=enemycardslot[slot_index].get_child(1)
 			enemy_card.animation_attack_down()
 			enemy_card.card_attack_action(null)
 			player_take_damage(1,enemy_card.cardattack)
+			await get_tree().create_timer(1.3).timeout
 			#$Player_Portrait.get_hurt()
 		elif enemycardslot[slot_index].slot_is_empty==true and playercardslot[slot_index].slot_is_empty==false:
 			var player_card=playercardslot[slot_index].get_child(1)
 			player_card.animation_attack_up()
 			player_card.card_attack_action(null)
 			player_take_damage(0,player_card.cardattack)
+			await get_tree().create_timer(1.3).timeout
 			#enemy_take_damage(player_card.cardattack)
 			#$enemy_portrait.get_hurt()
 		slot_index+=1
-	$TurnTimer.start(2)
+		#await get_tree().create_timer(1).timeout
+		#$\"Combat Visual Delay Timer\".start()
+	$TurnTimer.start(1.5)
 
 
 
@@ -285,6 +290,8 @@ func enemy_play_card():
 				enemybackupslot[slot_index].add_child(enemy_backup_card)
 				var random_card_index=randi_range(0,len(cardcollection)-1)
 				enemy_backup_card.cardload(cardcollection[random_card_index])
+				if (enemy_backup_card.cardattack)<=0:
+					enemy_backup_card.card_attribute_bonus(\"attack\",1)
 				enemy_backup_card.animation_card_drop_in()
 				enemybackupslot[slot_index].slot_is_empty=false
 				#enemycardslot[slot_index].slot_is_empty=false
@@ -300,13 +307,13 @@ func card_combat(player_card:Node2D,enemy_card:Node2D):
 	$visual_delay_timer.start(0.7)
 	await $visual_delay_timer.timeout
 	if len(player_card.card_ability)>=1 and player_card.card_ability[0]==1:
-		enemy_card.card_take_damage(player_card.cardattack,\"Poison\")
+		enemy_card.card_take_damage(player_card,player_card.cardattack,\"Poison\")
 	else:
-		enemy_card.card_take_damage(player_card.cardattack,\"Normal\")
+		enemy_card.card_take_damage(player_card,player_card.cardattack,\"Normal\")
 	if len(enemy_card.card_ability)>=1 and enemy_card.card_ability[0]==1:
-		player_card.card_take_damage(enemy_card.cardattack,\"Poison\")
+		player_card.card_take_damage(enemy_card,enemy_card.cardattack,\"Poison\")
 	else:
-		player_card.card_take_damage(enemy_card.cardattack,\"Normal\")
+		player_card.card_take_damage(enemy_card,enemy_card.cardattack,\"Normal\")
 
 
 func player_take_damage(target:int,damage:int):
@@ -366,7 +373,7 @@ func player_win():
 	$battle_result.visible=true
 	pass
 	
-func _physics_process(delta):
+func _physics_process(_delta):
 	var string_currentmana=String.num_int64(Globalsetting.current_mana)
 	var string_maxmana=String.num_int64(Globalsetting.max_mana)
 	$background/Manaframe/PanelContainer/Label.text=\"法力值：\"+string_currentmana+\"/\"+string_maxmana
@@ -380,7 +387,7 @@ func _physics_process(delta):
 func _on_player_ability_pressed():
 	print(\"ability triggered\")
 	drawcards(1)
-	#give_card(\"card16\")
+	#give_card(\"card22\")
 	player_take_damage(1,2)
 	$player_ability.disabled=true
 	$player_ability/Sprite2D.texture=load(\"res://resource/image/mapimage/abilityicon_disabled.png\")
@@ -390,109 +397,109 @@ func _on_player_ability_pressed():
 font = ExtResource("10_kn72v")
 font_size = 36
 
-[node name="Gamemap" type="Node"]
+[node name="Gamemap" type="Node" unique_id=598081039]
 script = SubResource("GDScript_pv5nh")
 metadata/_edit_vertical_guides_ = [127.0, 251.0, 399.0, 520.0, 706.0, 984.0, 107.0, 338.0, 748.0, 895.0]
 metadata/_edit_horizontal_guides_ = [16.0, 338.0, 410.0, 559.0, 788.0, 171.0]
 
-[node name="background" type="ColorRect" parent="."]
+[node name="background" type="ColorRect" parent="." unique_id=1068039206]
 offset_right = 1592.0
 offset_bottom = 898.0
 color = Color(0.443137, 0.443137, 0.443137, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="background"]
+[node name="Sprite2D" type="Sprite2D" parent="background" unique_id=310115406]
 position = Vector2(792.5, 447)
 scale = Vector2(1.37066, 1.37346)
 texture = ExtResource("1_hbbhf")
 
-[node name="Node" type="Node" parent="background/Sprite2D"]
+[node name="Node" type="Node" parent="background/Sprite2D" unique_id=1313033489]
 
-[node name="enemycardslot 1" type="ColorRect" parent="background"]
+[node name="enemycardslot 1" type="ColorRect" parent="background" unique_id=1593087618]
 layout_mode = 0
 offset_left = 356.0
 offset_top = 188.0
 offset_right = 476.0
 offset_bottom = 338.0
 
-[node name="enemybackupcardslot 1" type="ColorRect" parent="background/enemycardslot 1"]
+[node name="enemybackupcardslot 1" type="ColorRect" parent="background/enemycardslot 1" unique_id=1534722645]
 layout_mode = 0
 offset_left = 1.0
 offset_top = -170.0
 offset_right = 121.0
 offset_bottom = -20.0
 
-[node name="Sprite2D" type="Sprite2D" parent="background/enemycardslot 1/enemybackupcardslot 1"]
+[node name="Sprite2D" type="Sprite2D" parent="background/enemycardslot 1/enemybackupcardslot 1" unique_id=992654785]
 position = Vector2(60.625, 77.5)
 scale = Vector2(0.303709, 0.376214)
 texture = ExtResource("2_y7xhl")
 
-[node name="enemybackupslot1" parent="background/enemycardslot 1/enemybackupcardslot 1" instance=ExtResource("3_xtria")]
+[node name="enemybackupslot1" parent="background/enemycardslot 1/enemybackupcardslot 1" unique_id=1386397057 instance=ExtResource("3_xtria")]
 
-[node name="Sprite2D" type="Sprite2D" parent="background/enemycardslot 1"]
+[node name="Sprite2D" type="Sprite2D" parent="background/enemycardslot 1" unique_id=1580454149]
 position = Vector2(61, 75)
 scale = Vector2(0.316496, 0.362864)
 texture = ExtResource("4_jrgar")
 
-[node name="enemycardslot1" parent="background/enemycardslot 1" instance=ExtResource("4_vja44")]
+[node name="enemycardslot1" parent="background/enemycardslot 1" unique_id=1334951631 instance=ExtResource("4_vja44")]
 
-[node name="enemycardslot 2" type="ColorRect" parent="background"]
+[node name="enemycardslot 2" type="ColorRect" parent="background" unique_id=432355882]
 layout_mode = 0
 offset_left = 571.0
 offset_top = 187.0
 offset_right = 691.0
 offset_bottom = 337.0
 
-[node name="enemybackupcardslot 2" type="ColorRect" parent="background/enemycardslot 2"]
+[node name="enemybackupcardslot 2" type="ColorRect" parent="background/enemycardslot 2" unique_id=1514614435]
 layout_mode = 0
 offset_top = -167.0
 offset_right = 120.0
 offset_bottom = -17.0
 
-[node name="Sprite2D2" type="Sprite2D" parent="background/enemycardslot 2/enemybackupcardslot 2"]
+[node name="Sprite2D2" type="Sprite2D" parent="background/enemycardslot 2/enemybackupcardslot 2" unique_id=1391779507]
 position = Vector2(60, 74)
 scale = Vector2(0.303709, 0.376214)
 texture = ExtResource("2_y7xhl")
 
-[node name="enemybackupslot2" parent="background/enemycardslot 2/enemybackupcardslot 2" instance=ExtResource("3_xtria")]
+[node name="enemybackupslot2" parent="background/enemycardslot 2/enemybackupcardslot 2" unique_id=1809551901 instance=ExtResource("3_xtria")]
 position = Vector2(1, -2)
 
-[node name="Sprite2D2" type="Sprite2D" parent="background/enemycardslot 2"]
+[node name="Sprite2D2" type="Sprite2D" parent="background/enemycardslot 2" unique_id=844321139]
 position = Vector2(62, 75)
 scale = Vector2(0.316496, 0.362864)
 texture = ExtResource("4_jrgar")
 
-[node name="enemycardslot2" parent="background/enemycardslot 2" instance=ExtResource("4_vja44")]
+[node name="enemycardslot2" parent="background/enemycardslot 2" unique_id=1403212804 instance=ExtResource("4_vja44")]
 position = Vector2(2, 0)
 
-[node name="enemycardslot 3" type="ColorRect" parent="background"]
+[node name="enemycardslot 3" type="ColorRect" parent="background" unique_id=19644934]
 layout_mode = 0
 offset_left = 792.0
 offset_top = 188.0
 offset_right = 912.0
 offset_bottom = 338.0
 
-[node name="enemybackupcardslot 3" type="ColorRect" parent="background/enemycardslot 3"]
+[node name="enemybackupcardslot 3" type="ColorRect" parent="background/enemycardslot 3" unique_id=1575023112]
 layout_mode = 0
 offset_top = -167.0
 offset_right = 120.0
 offset_bottom = -17.0
 
-[node name="Sprite2D3" type="Sprite2D" parent="background/enemycardslot 3/enemybackupcardslot 3"]
+[node name="Sprite2D3" type="Sprite2D" parent="background/enemycardslot 3/enemybackupcardslot 3" unique_id=1585774779]
 position = Vector2(60, 72)
 scale = Vector2(0.303709, 0.376214)
 texture = ExtResource("2_y7xhl")
 
-[node name="enemybackupslot3" parent="background/enemycardslot 3/enemybackupcardslot 3" instance=ExtResource("3_xtria")]
+[node name="enemybackupslot3" parent="background/enemycardslot 3/enemybackupcardslot 3" unique_id=283442688 instance=ExtResource("3_xtria")]
 position = Vector2(1, -4)
 
-[node name="Sprite2D3" type="Sprite2D" parent="background/enemycardslot 3"]
+[node name="Sprite2D3" type="Sprite2D" parent="background/enemycardslot 3" unique_id=2057567170]
 position = Vector2(62, 75)
 scale = Vector2(0.316496, 0.362864)
 texture = ExtResource("4_jrgar")
 
-[node name="enemycardslot3" parent="background/enemycardslot 3" instance=ExtResource("4_vja44")]
+[node name="enemycardslot3" parent="background/enemycardslot 3" unique_id=1517015786 instance=ExtResource("4_vja44")]
 
-[node name="enemycardslot 4" type="ColorRect" parent="background"]
+[node name="enemycardslot 4" type="ColorRect" parent="background" unique_id=1776036146]
 layout_mode = 0
 offset_left = 1001.0
 offset_top = 188.0
@@ -500,100 +507,100 @@ offset_right = 1121.0
 offset_bottom = 338.0
 scale = Vector2(0.996324, 1)
 
-[node name="enemybackupcardslot 4" type="ColorRect" parent="background/enemycardslot 4"]
+[node name="enemybackupcardslot 4" type="ColorRect" parent="background/enemycardslot 4" unique_id=1186276613]
 layout_mode = 0
 offset_left = -1.0
 offset_top = -171.0
 offset_right = 122.0
 offset_bottom = -17.0
 
-[node name="Sprite2D4" type="Sprite2D" parent="background/enemycardslot 4/enemybackupcardslot 4"]
+[node name="Sprite2D4" type="Sprite2D" parent="background/enemycardslot 4/enemybackupcardslot 4" unique_id=1202008582]
 position = Vector2(61.5368, 76.75)
 scale = Vector2(0.316692, 0.375)
 texture = ExtResource("2_y7xhl")
 
-[node name="enemybackupslot4" parent="background/enemycardslot 4/enemybackupcardslot 4" instance=ExtResource("3_xtria")]
+[node name="enemybackupslot4" parent="background/enemycardslot 4/enemybackupcardslot 4" unique_id=1178883143 instance=ExtResource("3_xtria")]
 position = Vector2(0.00366211, 2)
 scale = Vector2(1.00369, 1)
 
-[node name="Sprite2D4" type="Sprite2D" parent="background/enemycardslot 4"]
+[node name="Sprite2D4" type="Sprite2D" parent="background/enemycardslot 4" unique_id=1406409782]
 position = Vector2(61.2251, 75)
 scale = Vector2(0.317664, 0.362864)
 texture = ExtResource("4_jrgar")
 
-[node name="enemycardslot4" parent="background/enemycardslot 4" instance=ExtResource("4_vja44")]
+[node name="enemycardslot4" parent="background/enemycardslot 4" unique_id=26781910 instance=ExtResource("4_vja44")]
 position = Vector2(2.00739, 0)
 scale = Vector2(1.00369, 1)
 
-[node name="playcardslot 1" type="ColorRect" parent="background"]
+[node name="playcardslot 1" type="ColorRect" parent="background" unique_id=414911203]
 layout_mode = 0
 offset_left = 365.0
 offset_top = 410.0
 offset_right = 485.0
 offset_bottom = 560.0
 
-[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 1"]
+[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 1" unique_id=987836785]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
 texture = ExtResource("4_jrgar")
 
-[node name="emptyslot1" parent="background/playcardslot 1" instance=ExtResource("4_t4gll")]
+[node name="emptyslot1" parent="background/playcardslot 1" unique_id=1457505982 instance=ExtResource("4_t4gll")]
 
-[node name="playcardslot 2" type="ColorRect" parent="background"]
+[node name="playcardslot 2" type="ColorRect" parent="background" unique_id=144880411]
 layout_mode = 0
 offset_left = 580.0
 offset_top = 410.0
 offset_right = 700.0
 offset_bottom = 560.0
 
-[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 2"]
+[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 2" unique_id=1882535781]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
 texture = ExtResource("4_jrgar")
 
-[node name="emptyslot2" parent="background/playcardslot 2" instance=ExtResource("4_t4gll")]
+[node name="emptyslot2" parent="background/playcardslot 2" unique_id=1778817692 instance=ExtResource("4_t4gll")]
 position = Vector2(-2, -2)
 
-[node name="playcardslot 3" type="ColorRect" parent="background"]
+[node name="playcardslot 3" type="ColorRect" parent="background" unique_id=1549370565]
 layout_mode = 0
 offset_left = 798.0
 offset_top = 410.0
 offset_right = 918.0
 offset_bottom = 560.0
 
-[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 3"]
+[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 3" unique_id=1757692115]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
 texture = ExtResource("4_jrgar")
 
-[node name="emptyslot3" parent="background/playcardslot 3" instance=ExtResource("4_t4gll")]
+[node name="emptyslot3" parent="background/playcardslot 3" unique_id=1967178382 instance=ExtResource("4_t4gll")]
 position = Vector2(-2, 0)
 
-[node name="playcardslot 4" type="ColorRect" parent="background"]
+[node name="playcardslot 4" type="ColorRect" parent="background" unique_id=1629220010]
 layout_mode = 0
 offset_left = 1002.0
 offset_top = 410.0
 offset_right = 1122.0
 offset_bottom = 560.0
 
-[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 4"]
+[node name="Sprite2D" type="Sprite2D" parent="background/playcardslot 4" unique_id=1845216728]
 position = Vector2(58, 74)
 scale = Vector2(0.316496, 0.362864)
 texture = ExtResource("4_jrgar")
 
-[node name="emptyslot4" parent="background/playcardslot 4" instance=ExtResource("4_t4gll")]
+[node name="emptyslot4" parent="background/playcardslot 4" unique_id=1711170634 instance=ExtResource("4_t4gll")]
 position = Vector2(-2, 0)
 
-[node name="Manaframe" parent="background" instance=ExtResource("5_xjxp5")]
+[node name="Manaframe" parent="background" unique_id=1603147048 instance=ExtResource("5_xjxp5")]
 position = Vector2(292, 617)
 
-[node name="EnemyHealthFrame" parent="background" instance=ExtResource("8_rmj8r")]
+[node name="EnemyHealthFrame" parent="background" unique_id=292291716 instance=ExtResource("8_rmj8r")]
 position = Vector2(34, 275)
 
-[node name="PlayerHealthFrame" parent="background" instance=ExtResource("8_rmj8r")]
+[node name="PlayerHealthFrame" parent="background" unique_id=190639028 instance=ExtResource("8_rmj8r")]
 position = Vector2(30, 410)
 
-[node name="endturn" type="Button" parent="."]
+[node name="endturn" type="Button" parent="." unique_id=367407888]
 offset_left = 743.0
 offset_top = 629.0
 offset_right = 829.0
@@ -602,19 +609,19 @@ scale = Vector2(1.79434, 2.04077)
 text = "结束回合"
 icon_alignment = 1
 
-[node name="DeckFrame" type="Node" parent="."]
+[node name="DeckFrame" type="Node" parent="." unique_id=707625303]
 
-[node name="MarginContainer" type="MarginContainer" parent="DeckFrame"]
+[node name="MarginContainer" type="MarginContainer" parent="DeckFrame" unique_id=1671140592]
 offset_left = 1255.0
 offset_top = 704.0
 offset_right = 1386.0
 offset_bottom = 857.0
 
-[node name="Sprite2D" type="Sprite2D" parent="DeckFrame/MarginContainer"]
+[node name="Sprite2D" type="Sprite2D" parent="DeckFrame/MarginContainer" unique_id=1255753743]
 position = Vector2(63, 78)
 texture = ExtResource("9_7gep0")
 
-[node name="decklabel" type="Label" parent="DeckFrame"]
+[node name="decklabel" type="Label" parent="DeckFrame" unique_id=539871706]
 offset_left = 1218.0
 offset_top = 645.0
 offset_right = 1398.0
@@ -622,13 +629,17 @@ offset_bottom = 697.0
 text = "剩余卡牌："
 label_settings = SubResource("LabelSettings_dnfcb")
 
-[node name="TurnTimer" type="Timer" parent="."]
+[node name="TurnTimer" type="Timer" parent="." unique_id=379880562]
 wait_time = 5.0
 one_shot = true
 
-[node name="visual_delay_timer" type="Timer" parent="."]
+[node name="Combat Visual Delay Timer" type="Timer" parent="." unique_id=143333311]
+wait_time = 2.0
+one_shot = true
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="visual_delay_timer" type="Timer" parent="." unique_id=83433987]
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1508680133]
 self_modulate = Color(1, 1, 1, 0)
 offset_left = 184.0
 offset_top = 708.0
@@ -636,18 +647,18 @@ offset_right = 1014.0
 offset_bottom = 860.0
 pivot_offset = Vector2(469, 93)
 
-[node name="handframe" type="Sprite2D" parent="PanelContainer"]
+[node name="handframe" type="Sprite2D" parent="PanelContainer" unique_id=1415194510]
 modulate = Color(1, 1, 1, 0.533333)
 position = Vector2(416.625, 74.3749)
 scale = Vector2(0.721137, 0.367022)
 texture = ExtResource("11_s874x")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer" unique_id=306457949]
 custom_minimum_size = Vector2(120, 155)
 layout_mode = 2
 theme_override_constants/separation = 25
 
-[node name="player_ability" parent="." instance=ExtResource("13_18fj7")]
+[node name="player_ability" parent="." unique_id=1842508635 instance=ExtResource("13_18fj7")]
 offset_left = 1033.0
 offset_top = 708.0
 offset_right = 1093.0
@@ -656,25 +667,25 @@ scale = Vector2(2.44, 2.44)
 tooltip_text = "受到2点伤害,抽一张牌"
 mouse_default_cursor_shape = 2
 
-[node name="Player_Portrait" parent="." instance=ExtResource("13_hxdxn")]
+[node name="Player_Portrait" parent="." unique_id=2063296427 instance=ExtResource("13_hxdxn")]
 position = Vector2(58, 499)
 scale = Vector2(1.4727, 1.4727)
 portrait_route = "res://resource/image/mapimage/herosprite.jpg"
 
-[node name="Enemy_Portrait" parent="." instance=ExtResource("13_hxdxn")]
+[node name="Enemy_Portrait" parent="." unique_id=1056703796 instance=ExtResource("13_hxdxn")]
 position = Vector2(54, 77)
 scale = Vector2(1.4727, 1.4727)
 portrait_route = "res://resource/image/mapimage/enemysprite.jpg"
 
-[node name="BGMPlayer" type="AudioStreamPlayer" parent="."]
+[node name="BGMPlayer" type="AudioStreamPlayer" parent="." unique_id=592561570]
 process_mode = 3
 stream = ExtResource("15_kayis")
 volume_db = -18.739
 
-[node name="pause_menu" parent="." instance=ExtResource("16_7miq7")]
+[node name="pause_menu" parent="." unique_id=1079946873 instance=ExtResource("16_7miq7")]
 visible = false
 
-[node name="battle_result" parent="." instance=ExtResource("11_k8lyi")]
+[node name="battle_result" parent="." unique_id=639589588 instance=ExtResource("11_k8lyi")]
 visible = false
 
 [connection signal="pressed" from="endturn" to="." method="_on_startcombat_pressed"]

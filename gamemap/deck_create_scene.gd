@@ -20,17 +20,22 @@ func _ready():
 		deckbase.append(Globalsetting.cardtemplate.get(index))
 	loadcards()
 	pass # Replace with function body.
-
-func loadcards():
-	print("loading cards")
+func clearcards(slotindex:int):
+	print("clearing cards")
 	var temp=0
 	while(temp<3):
-		var slot_card=card_slot[temp].get_child(1)
-		if slot_card!=null:
-			print("remove card")
-			card_slot[temp].get_child(1).queue_free()
+		if temp!=slotindex:
+			var slot_card=card_slot[temp].get_child(1)
+			print(card_slot[temp].get_child(0))
+			print(card_slot[temp].get_child(1))
+			if slot_card!=null:
+				print("remove card")
+				card_slot[temp].get_child(1).queue_free()
 		temp+=1
-		
+			
+func loadcards():
+	print("loading cards")
+	
 	#create a temp cardbase to load 3 different cards
 	var temp_card_collection:Array=[]
 	for index in Globalsetting.cardloadid:
@@ -78,37 +83,37 @@ func add_card_to_deck(card:Node2D,cardindex:int):
 
 
 
-func _on_button_select_1_pressed():
+func _on_button_select_1_pressed() -> void:
 	if len(Globalsetting.player_global_deck)<30:
 		var target_card=card_slot[0].get_child(1)
 		card_slot[0].remove_child(target_card)
 		add_card_to_deck(target_card,0)
 		print("card 1 selected")
+	clearcards(0)
 	loadcards()
-	pass # Replace with function body.
 
 
-func _on_button_select_2_pressed():
+func _on_button_select_2_pressed()-> void:
 	if len(Globalsetting.player_global_deck)<30:
 		var target_card=card_slot[1].get_child(1)
 		card_slot[1].remove_child(target_card)
 		add_card_to_deck(target_card,1)
 		print("card 2 selected")
+	clearcards(1)
 	loadcards()
-	pass # Replace with function body.
 
 
-func _on_button_select_3_pressed():
+func _on_button_select_3_pressed() -> void:
 	if len(Globalsetting.player_global_deck)<30:
 		var target_card=card_slot[2].get_child(1)
 		card_slot[2].remove_child(target_card)
 		add_card_to_deck(target_card,2)
 		print("card 3 selected")
+	clearcards(2)
 	loadcards()
-	pass # Replace with function body.
 
 
-func _on_button_pressed():
+func _on_button_pressed() -> void:
 	Globalsetting.player_health=40
 	Globalsetting.enemy_health=40
 	Globalsetting.current_turn=0
@@ -117,4 +122,3 @@ func _on_button_pressed():
 	Globalsetting.current_mana=0
 	Globalsetting.player_turn=true
 	get_tree().change_scene_to_file("res://gamemap/gamemap.tscn")
-	pass # Replace with function body.

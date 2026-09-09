@@ -63,13 +63,13 @@ var global_sigil_description_template:Array=[
 	"在死亡时会留下一个炸弹（还没做好）",
 	"在死亡时会消灭对面的卡牌（还没做好）",
 	"在死亡时会将一张兔子卡牌置入你的手牌（还没做好）",
-	"不会受到攻击力低于自身的卡牌的伤害（还没做好）",
-	"在攻击后会死亡（还没做好）",
-	"在消灭一张卡牌后会获得+1攻击（还没做好）",
-	"在死亡时会抽1张牌（还没做好）",
+	"不会受到攻击力低于自身的卡牌的伤害",
+	"在攻击后会死亡",
+	"在消灭一张卡牌后会获得+1攻击",
+	"在死亡时会抽1张牌",
 	"在攻击后如果没有死亡,会回复所有生命值（还没做好）",
 	"的攻击伤害会为玩家回复等量生命",
-	"对剧毒伤害免疫（还没做好）"
+	"对剧毒伤害免疫"
 ]
 
 enum cardloadid{
@@ -80,7 +80,7 @@ enum cardloadid{
 
 var cardtemplate: Dictionary ={
 	"card0": {cardid=0,cardname="Aluna",cardrarity=3,cardcost= 3,cardattack = 1,cardhealth = 4,cardsprite="res://resource/image/cardsprite/cardaluna.png",cardslot=0,cardability=3},
-	"card1": {cardid=1,cardname="Kiiwata",cardrarity=3,cardcost= 2,cardattack = 2,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardkiiwata.png",cardslot=0,cardability=256},
+	"card1": {cardid=1,cardname="Kiiwata",cardrarity=3,cardcost= 3,cardattack = 3,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardkiiwata.png",cardslot=0,cardability=256},
 	"card2": {cardid=2,cardname="Chy",cardrarity=3,cardcost= 6,cardattack = 3,cardhealth = 8,cardsprite="res://resource/image/cardsprite/cardchy.png",cardslot=0,cardability=8192},
 	"card3": {cardid=3,cardname="强盗",cardrarity=0,cardcost= 4,cardattack = 2,cardhealth = 5,cardsprite="res://resource/image/cardsprite/cardbandit.png",cardslot=0,cardability=0},
 	"card4": {cardid=4,cardname="眼镜蛇",cardrarity=0,cardcost= 2,cardattack = 1,cardhealth = 2,cardsprite="res://resource/image/cardsprite/cardsnake.png",cardslot=0,cardability=1},
@@ -95,7 +95,7 @@ var cardtemplate: Dictionary ={
 	"card13": {cardid=13,cardname="多头蛇",cardrarity=0,cardcost= 6,cardattack = 2,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardhydra.png",cardslot=0,cardability=4},
 	"card14": {cardid=14,cardname="猫头鹰",cardrarity=0,cardcost= 2,cardattack = 2,cardhealth = 4,cardsprite="res://resource/image/cardsprite/cardowl.png",cardslot=0,cardability=0},
 	"card15": {cardid=15,cardname="骡子",cardrarity=0,cardcost= 3,cardattack = 2,cardhealth = 3,cardsprite="res://resource/image/cardsprite/cardmule.png",cardslot=0,cardability=8},
-	"card16": {cardid=16,cardname="活动假人",cardrarity=0,cardcost= 1,cardattack = 0,cardhealth = 1,cardsprite="res://resource/image/cardsprite/carddummy.png",cardslot=0,cardability=16},
+	"card16": {cardid=16,cardname="活动假人",cardrarity=0,cardcost= 2,cardattack = 1,cardhealth = 1,cardsprite="res://resource/image/cardsprite/carddummy.png",cardslot=0,cardability=16},
 	"card17": {cardid=17,cardname="活着的毛皮",cardrarity=0,cardcost= 2,cardattack = 0,cardhealth = 4,cardsprite="res://resource/image/cardsprite/cardpelts.png",cardslot=0,cardability=0},
 	"card18": {cardid=18,cardname="十字军",cardrarity=0,cardcost= 5,cardattack = 4,cardhealth = 2,cardsprite="res://resource/image/cardsprite/cardcrusader.png",cardslot=0,cardability=2},
 	"card19": {cardid=19,cardname="机械陷阱",cardrarity=0,cardcost= 6,cardattack = 2,cardhealth = 5,cardsprite="res://resource/image/cardsprite/cardmechtrap.png",cardslot=0,cardability=32},
@@ -108,5 +108,3 @@ var cardtemplate: Dictionary ={
 	"card26": {cardid=26,cardname="坚固的岩石",cardrarity=0,cardcost= 3,cardattack = 1,cardhealth = 8,cardsprite="res://resource/image/cardsprite/cardrock.png",cardslot=0,cardability=16384},
 	"card27": {cardid=27,cardname="附魔的符文石",cardrarity=1,cardcost= 8,cardattack = 2,cardhealth = 7,cardsprite="res://resource/image/cardsprite/cardrunewithspike.png",cardslot=0,cardability=8193}
 }
-
-

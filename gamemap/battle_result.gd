@@ -7,15 +7,15 @@ func _ready():
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass
 
 
-func _on_quit_button_pressed():
+func _on_quit_button_pressed() -> void:
 	get_tree().quit()
 
 
-func _on_restart_button_pressed():
+func _on_restart_button_pressed() -> void:
 	Globalsetting.player_health=40
 	Globalsetting.enemy_health=40
 	Globalsetting.current_turn=0
